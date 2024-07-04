@@ -101,5 +101,17 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&spi1_pins_a>;
 	status = "okay";
+
+	esp8089@0 {
+		status = "okay";
+		compatible = "boss,esp8089";
+		spi-cpol;
+		spi-cpha;
+		reg = <0>;
+		spi-max-frequency = <30000000>;
+		reset= <132>; //PE4
+		interrupt= <133>; //PE5
+		debug= <0>;
+	};
 };
 
