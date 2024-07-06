@@ -25,15 +25,17 @@
 	leds {
 		compatible = "gpio-leds";
 
-		blue_led {
-			label = "licheepi:blue:usr";
+		red_led {
+			label = "red_led";
+			linux,default-trigger = "heartbeat";
 			gpios = <&pio 4 9 GPIO_ACTIVE_LOW>; /* PE9 */
 		};
 
 		green_led {
-			label = "licheepi:green:usr";
+			label = "green_led";
 			gpios = <&pio 4 10 GPIO_ACTIVE_LOW>; /* PE10 */
-			default-state = "on";
+			default-state = "off";
+			linux,default-trigger = "nand-disk";
 		};
 	};
 
@@ -68,6 +70,33 @@
     pinctrl-0 = <&i2c0_pins>;
     pinctrl-names = "default";
     status = "okay";
+};
+
+&i2c1 {
+    pinctrl-0 = <&i2c1_pins>;
+    pinctrl-names = "default";
+    status = "okay";
+};
+
+&i2c2 {
+    pinctrl-0 = <&i2c2_pins>;
+    pinctrl-names = "default";
+	clock-frequency = <400000>;
+    status = "okay";
+};
+
+&otg_sram {
+	status = "okay";
+};
+
+&usb_otg {
+	dr_mode = "peripheral";  // otg / host / peripheral
+	status = "okay";
+};
+
+&usbphy {
+	//usb0_id_det-gpio = <&pio 4 2 GPIO_ACTIVE_HIGH>; /* PE2 */
+	status = "okay";
 };
 
 &spi0 {
