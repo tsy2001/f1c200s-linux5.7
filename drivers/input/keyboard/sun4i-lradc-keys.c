@@ -94,8 +94,8 @@ struct sun4i_lradc_data {
 static irqreturn_t sun4i_lradc_irq(int irq, void *dev_id)
 {
 	struct sun4i_lradc_data *lradc = dev_id;
-	u32 i, ints, val, voltage, diff, keycode = 0, closest = 0xffffffff;
-
+	u32 i, ints, val, voltage, diff[5], keycode = 0, min_value, min_index;
+	static u32 key_code = 0;
 	ints  = readl(lradc->base + LRADC_INTS);
 
 	/*
@@ -103,27 +103,63 @@ static irqreturn_t sun4i_lradc_irq(int irq, void *dev_id)
 	 * any info as to which key was released, so we cache the keycode.
 	 */
 
-	if (ints & CHAN0_KEYUP_IRQ) {
-		input_report_key(lradc->input, lradc->chan0_keycode, 0);
-		lradc->chan0_keycode = 0;
+	// if (ints & CHAN0_KEYUP_IRQ) {
+	// 	input_report_key(lradc->input, lradc->chan0_keycode, 0);
+	// 	lradc->chan0_keycode = 0;
+	// }
+
+	if (ints & CHAN0_KEYUP_IRQ) 
+	{
+		// printk("key up int \n");
+		printk("clear code : 0x%x", key_code);
+		input_report_key(lradc->input, key_code, 0);
 	}
 
-	if ((ints & CHAN0_KEYDOWN_IRQ) && lradc->chan0_keycode == 0) {
+	// if (ints & CHAN0_KEYDOWN_IRQ) 
+	// {
+	// 	printk("key down int \n");
+	// }
+
+	// if (key_code == 0) 
+	if (ints & CHAN0_KEYDOWN_IRQ) 
+	{
 		val = readl(lradc->base + LRADC_DATA0) & 0x3f;
 		voltage = val * lradc->vref / 63;
 
+		// printk("voltage: %d\n", voltage);
+
+		// if (val > 60)
+		// {
+		// 	input_report_key(lradc->input, key_code, 0);
+		// 	printk("clear code : 0x%x", key_code);
+		// 	// key_code = 0;
+		// 	goto exit;
+		// }
+
 		for (i = 0; i < lradc->chan0_map_count; i++) {
-			diff = abs(lradc->chan0_map[i].voltage - voltage);
-			if (diff < closest) {
-				closest = diff;
-				keycode = lradc->chan0_map[i].keycode;
-			}
+			diff[i] = abs(lradc->chan0_map[i].voltage - voltage);
+			// printk("%d. diff: %d\n", i, diff[i]);
 		}
 
-		lradc->chan0_keycode = keycode;
-		input_report_key(lradc->input, lradc->chan0_keycode, 1);
+		min_index = 0;
+		min_value = diff[min_index];
+		for (i = 1; i < lradc->chan0_map_count; i++) {
+			if(diff[i] < min_value) {
+				min_value = diff[i];
+				min_index = i;
+			}
+		}
+		key_code = lradc->chan0_map[min_index].keycode;
+
+		// printk("min index%d. min diff: %d\n", min_index, min_value);
+
+		printk("report code : 0x%x", key_code);
+
+		
+		input_report_key(lradc->input, key_code, 1);
 	}
 
+exit:
 	input_sync(lradc->input);
 
 	writel(ints, lradc->base + LRADC_INTS);

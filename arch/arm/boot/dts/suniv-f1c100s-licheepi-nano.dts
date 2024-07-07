@@ -39,6 +39,13 @@
 		};
 	};
 
+	reg_vcc3v0: vcc3v0 {
+        compatible = "regulator-fixed";
+        regulator-name = "vcc3v0";
+        regulator-min-microvolt = <3000000>;
+        regulator-max-microvolt = <3000000>;
+    };
+
 	reg_vcc3v3: vcc3v3 {
 		compatible = "regulator-fixed";
 		regulator-name = "vcc3v3";
@@ -69,7 +76,15 @@
 &i2c0 {
     pinctrl-0 = <&i2c0_pins>;
     pinctrl-names = "default";
+	clock-frequency = <100000>;
     status = "okay";
+
+	pcf8563: pcf8563@51 {
+		compatible = "nxp,pcf8563";
+		reg = <0x51>;
+		#clock-cells = <0>;
+    };
+
 };
 
 &i2c1 {
@@ -97,6 +112,32 @@
 &usbphy {
 	//usb0_id_det-gpio = <&pio 4 2 GPIO_ACTIVE_HIGH>; /* PE2 */
 	status = "okay";
+};
+
+&lradc {
+	vref-supply = <&reg_vcc3v0>;
+	status = "okay";
+
+	button@200 {
+			label = "left";
+			linux,code = <132>;
+			channel = <0>;
+			voltage = <0>;
+	};
+
+	button@400 {
+			label = "middle";
+			linux,code = <133>;
+			channel = <0>;
+			voltage = <603174>;
+	};
+
+	button@600 {
+			label = "right";
+			linux,code = <134>;
+			channel = <0>;
+			voltage = <1047619>;
+	};
 };
 
 &spi0 {
