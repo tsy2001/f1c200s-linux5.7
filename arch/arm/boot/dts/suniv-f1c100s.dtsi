@@ -267,7 +267,7 @@
 			};
 
 			spi1_pins_a: spi1-pins-pa {	 //CLK:PA2   CS:PA0  MISO:PA3  MOSI:PA1
-				pins = "PA2", "PA0", "PA3", "PA1";
+				pins = "PA2", "-1", "PA3", "PA1";
 				function = "spi1";
 			};
 		};
