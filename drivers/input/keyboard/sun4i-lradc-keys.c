@@ -111,8 +111,9 @@ static irqreturn_t sun4i_lradc_irq(int irq, void *dev_id)
 	if (ints & CHAN0_KEYUP_IRQ) 
 	{
 		// printk("key up int \n");
-		printk("clear code : 0x%x", key_code);
+		// printk("clear code : 0x%x", key_code);
 		input_report_key(lradc->input, key_code, 0);
+		key_code = 0;
 	}
 
 	// if (ints & CHAN0_KEYDOWN_IRQ) 
@@ -121,7 +122,7 @@ static irqreturn_t sun4i_lradc_irq(int irq, void *dev_id)
 	// }
 
 	// if (key_code == 0) 
-	if (ints & CHAN0_KEYDOWN_IRQ) 
+	if ((ints & CHAN0_KEYDOWN_IRQ) && key_code == 0 )
 	{
 		val = readl(lradc->base + LRADC_DATA0) & 0x3f;
 		voltage = val * lradc->vref / 63;
@@ -159,7 +160,7 @@ static irqreturn_t sun4i_lradc_irq(int irq, void *dev_id)
 		input_report_key(lradc->input, key_code, 1);
 	}
 
-exit:
+// exit:
 	input_sync(lradc->input);
 
 	writel(ints, lradc->base + LRADC_INTS);
