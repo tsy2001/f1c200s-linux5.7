@@ -154,7 +154,7 @@ static irqreturn_t sun4i_lradc_irq(int irq, void *dev_id)
 
 		// printk("min index%d. min diff: %d\n", min_index, min_value);
 
-		printk("report code : 0x%x", key_code);
+		// printk("report code : 0x%x", key_code);
 
 		
 		input_report_key(lradc->input, key_code, 1);
