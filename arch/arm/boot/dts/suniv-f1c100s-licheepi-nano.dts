@@ -39,6 +39,13 @@
 		};
 	};
 
+	// beeper {
+	// 	compatible = "pwm-beeper";
+	// 	pwms = <&pwm 0 400000 399999>;
+	// 	pinctrl-names = "default";
+	// 	pinctrl-0 = <&pwm1_pin>;
+	// };
+
 	reg_vcc3v0: vcc3v0 {
         compatible = "regulator-fixed";
         regulator-name = "vcc3v0";
@@ -52,6 +59,12 @@
 		regulator-min-microvolt = <3300000>;
 		regulator-max-microvolt = <3300000>;
 	};
+};
+
+&pwm {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pwm1_pin>;
+	status = "okay";
 };
 
 &mmc0 {

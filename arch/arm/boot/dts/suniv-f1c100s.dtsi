@@ -270,6 +270,12 @@
 				pins = "PA2", "-1", "PA3", "PA1";
 				function = "spi1";
 			};
+
+			pwm1_pin: pwm1_pin {
+				pins = "PE6";
+				function = "pwm1";
+			};
+
 		};
 
 		timer@1c20c00 {
@@ -348,9 +354,8 @@
 		};
 
 		pwm: pwm@1c21000 {
-			compatible = "allwinner,suniv-f1c100s-pwm",
-				     "allwinner,sun7i-a20-pwm";
-			reg = <0x01c21000 0x400>;
+			compatible = "allwinner,sun7i-a20-pwm";
+			reg = <0x01c21000 0x08>;
 			clocks = <&osc24M>;
 			#pwm-cells = <3>;
 			status = "disabled";
