@@ -61,6 +61,14 @@
 	};
 };
 
+&codec {
+    allwinner,audio-routing =
+    "Headphone", "HP",
+    "Headphone", "HPCOM",
+    "MIC", "Mic";
+    status = "okay";
+};
+
 &pwm {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pwm1_pin>;
