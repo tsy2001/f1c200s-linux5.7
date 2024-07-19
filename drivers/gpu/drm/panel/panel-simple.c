@@ -3411,6 +3411,30 @@ static const struct panel_desc arm_rtsm = {
 	.bus_format = MEDIA_BUS_FMT_RGB888_1X24,
 };
 
+static const struct drm_display_mode alientek_7_inch_mode = {
+	.clock = 51200,
+	.hdisplay = 1024,
+	.hsync_start = 1024 + 160,
+	.hsync_end = 1024 + 160 + 20,
+	.htotal = 1024 + 160 + 20 + 160,
+	.vdisplay = 600,
+	.vsync_start = 600 + 12,
+	.vsync_end = 600 + 12 + 3,
+	.vtotal = 600 + 3 + 12 + 12,
+	.vrefresh = 60,
+};
+
+static const struct panel_desc alientek_7_inch = {
+	.modes = &alientek_7_inch_mode,
+	.num_modes = 1,
+	.bpc = 6,
+	.size = {
+		.width = 154,
+		.height = 85,
+	},
+};
+
+
 static const struct of_device_id platform_of_match[] = {
 	{
 		.compatible = "ampire,am-480272h3tmqw-t01h",
@@ -3770,6 +3794,9 @@ static const struct of_device_id platform_of_match[] = {
 		/* Must be the last entry */
 		.compatible = "panel-dpi",
 		.data = &panel_dpi,
+	}, {
+		.compatible = "alientek,alientek_7_inch",  //自己添加的,需要和设备树一致
+		.data = &alientek_7_inch, //自己添加的
 	}, {
 		/* sentinel */
 	}
