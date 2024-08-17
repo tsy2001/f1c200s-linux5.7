@@ -38,7 +38,7 @@
 	};
 	
 	de: display-engine {
-		compatible = "allwinner,suniv-f1c100s-display-engine";
+		compatible = "allwinner,sun4i-a10-display-engine";
 		allwinner,pipelines = <&fe0>;
 		status = "disabled";
 	};
@@ -123,13 +123,15 @@
 		};
 
 		tcon0: lcd-controller@1c0c000 {
-			compatible = "allwinner,suniv-f1c100s-tcon";
+			compatible = "allwinner,sun4i-a10-tcon";
 			reg = <0x01c0c000 0x1000>;
 			interrupts = <29>;
 			clocks = <&ccu CLK_BUS_LCD>,
-				 <&ccu CLK_TCON>;
+				 <&ccu CLK_TCON>,
+				 <&osc24M>;
 			clock-names = "ahb",
-				      "tcon-ch0";
+				      "tcon-ch0",
+					  "tcon-ch1";
 			clock-output-names = "tcon-pixel-clock";
 			resets = <&ccu RST_BUS_LCD>;
 			reset-names = "lcd";
@@ -279,6 +281,11 @@
 				       "PD20", "PD21";
 				function = "lcd";
 			};
+
+			ts_int_pin: ts_int_pin {
+				pins = "PE3";
+				function = "gpio_in";
+			};
 			
 			mmc0_pins: mmc0-pins {
 				pins = "PF0", "PF1", "PF2", "PF3", "PF4", "PF5";
@@ -386,7 +393,7 @@
 		};
 
 		fe0: display-frontend@1e00000 {
-			compatible = "allwinner,suniv-f1c100s-display-frontend";
+			compatible = "allwinner,sun4i-a10-display-frontend";
 			reg = <0x01e00000 0x20000>;
 			interrupts = <30>;
 			clocks = <&ccu CLK_BUS_DE_FE>, <&ccu CLK_DE_FE>,
@@ -414,7 +421,7 @@
 		};
 
 		be0: display-backend@1e60000 {
-			compatible = "allwinner,suniv-f1c100s-display-backend";
+			compatible = "allwinner,sun4i-a10-display-backend";
 			reg = <0x01e60000 0x10000>;
 			reg-names = "be";
 			interrupts = <31>;
