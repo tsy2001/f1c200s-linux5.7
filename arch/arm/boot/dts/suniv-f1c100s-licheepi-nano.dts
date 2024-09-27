@@ -113,7 +113,7 @@
 &mmc0 {
 	vmmc-supply = <&reg_vcc3v3>;
 	bus-width = <4>;
-	broken-cd;
+	cd-gpios = <&pio 4 2 GPIO_ACTIVE_LOW>;
 	status = "okay";
 };
 
@@ -173,7 +173,7 @@
 };
 
 &usb_otg {
-	dr_mode = "peripheral";  // otg / host / peripheral
+	dr_mode = "host";  // otg / host / peripheral
 	status = "okay";
 };
 
