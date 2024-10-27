@@ -22,24 +22,6 @@
 		stdout-path = "serial0:115200n8";
 	};
 
-	panel: panel {
-		compatible = "alientek,alientek_7_inch", "simple-panel";
-		#address-cells = <1>;
-		#size-cells = <0>;
-		power-supply = <&reg_vcc3v3>;
-
- 		port@0 {
-			reg = <0>;
-			#address-cells = <1>;
-			#size-cells = <0>;
-
- 			panel_input: endpoint@0 {
-				reg = <0>;
-				remote-endpoint = <&tcon0_out_lcd>;
-			};
-		};
-	};
-
 	leds {
 		compatible = "gpio-leds";
 
@@ -76,23 +58,6 @@
 		regulator-name = "vcc3v3";
 		regulator-min-microvolt = <3300000>;
 		regulator-max-microvolt = <3300000>;
-	};
-};
-
-&de {
-	status = "okay";
-};
-
-&tcon0 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&lcd_rgb666_pins>;
-	status = "okay";
-};
-
-&tcon0_out {
-	tcon0_out_lcd: endpoint@0 {
-		reg = <0>;
-		remote-endpoint = <&panel_input>;
 	};
 };
 
@@ -165,7 +130,7 @@
     pinctrl-0 = <&i2c2_pins>;
     pinctrl-names = "default";
 	clock-frequency = <1000000>;
-    status = "disabled";
+    status = "okay";
 };
 
 &otg_sram {
