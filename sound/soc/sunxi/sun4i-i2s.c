@@ -324,8 +324,10 @@ static int sun4i_i2s_set_clk_rate(struct snd_soc_dai *dai,
 	}
 
 	ret = clk_set_rate(i2s->mod_clk, clk_rate);
-	if (ret)
+	if (ret) {
+		dev_err(dai->dev, "Failed to set clk rate: %d\n", clk_rate);
 		return ret;
+	}
 
 	oversample_rate = i2s->mclk_freq / rate;
 	if (!sun4i_i2s_oversample_is_valid(oversample_rate)) {
@@ -1245,10 +1247,12 @@ static int sun4i_i2s_probe(struct platform_device *pdev)
 
 	i2s->playback_dma_data.addr = res->start +
 					i2s->variant->reg_offset_txdata;
-	i2s->playback_dma_data.maxburst = 8;
+	// i2s->playback_dma_data.maxburst = 8;
+	i2s->playback_dma_data.maxburst = 4;
 
 	i2s->capture_dma_data.addr = res->start + SUN4I_I2S_FIFO_RX_REG;
-	i2s->capture_dma_data.maxburst = 8;
+	// i2s->capture_dma_data.maxburst = 8;
+	i2s->capture_dma_data.maxburst = 4;
 
 	pm_runtime_enable(&pdev->dev);
 	if (!pm_runtime_enabled(&pdev->dev)) {

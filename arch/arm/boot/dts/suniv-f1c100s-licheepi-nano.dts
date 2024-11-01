@@ -40,6 +40,29 @@
 		};
 	};
 
+	pcm5102a: pcm5102a {
+		compatible = "ti,pcm5102a";
+		pcm510x,format = "i2s";
+		#sound-dai-cells = <0>;
+	};
+
+	sound_i2s {
+		compatible = "simple-audio-card";
+		simple-audio,name = "I2S-master";
+		simple-audio-card,format = "i2s";
+		simple-audio-card,mclk-fs = <256>;
+
+		status = "okay";
+
+		simple-audio-card,cpu {
+			sound-dai = <&i2s0>;
+		};
+
+		simple-audio-card,codec {
+			sound-dai = <&pcm5102a>;
+		};
+	};
+
 	// beeper {
 	// 	compatible = "pwm-beeper";
 	// 	pwms = <&pwm 0 400000 399999>;
@@ -60,6 +83,11 @@
 		regulator-min-microvolt = <3300000>;
 		regulator-max-microvolt = <3300000>;
 	};
+};
+
+&i2s0 {
+	sound-dai = <&pcm5102a>;
+	status = "okay";
 };
 
 &codec {
