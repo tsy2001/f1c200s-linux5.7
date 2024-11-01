@@ -40,15 +40,16 @@
 		};
 	};
 
-	pcm5102a: pcm5102a {
+	pcm5102a: pcm510x {
 		compatible = "ti,pcm5102a";
 		pcm510x,format = "i2s";
+		status = "okay";
 		#sound-dai-cells = <0>;
 	};
 
 	sound_i2s {
 		compatible = "simple-audio-card";
-		simple-audio,name = "I2S-master";
+		simple-audio-card,name = "I2S-master";
 		simple-audio-card,format = "i2s";
 		simple-audio-card,mclk-fs = <256>;
 
@@ -87,6 +88,8 @@
 
 &i2s0 {
 	sound-dai = <&pcm5102a>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2s_pins>;
 	status = "okay";
 };
 
