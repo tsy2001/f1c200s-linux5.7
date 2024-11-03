@@ -97,6 +97,9 @@
     allwinner,audio-routing =
     "Headphone", "HP",
     "Headphone", "HPCOM",
+	"LINEIN", "Line In",
+	"FMINL", "Left FM In",
+	"FMINR", "Right FM In",
     "MIC", "Mic";
     status = "okay";
 };
@@ -120,6 +123,12 @@
 	status = "okay";
 };
 
+&uart1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart1_pd_pins>;
+	status = "okay";
+};
+
 &uart2 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&uart2_pe_pins>;
@@ -138,24 +147,24 @@
 		#clock-cells = <0>;
     };
 
-	ft5426: touchscreen@38 { //38为设备地址（16进制）
-        compatible = "edt,edt-ft5406"; //兼容性配置
-        reg = <0x38>;//设备地址
-        interrupt-parent = <&pio>;//gpio中断
-        interrupts = <4 3 IRQ_TYPE_EDGE_FALLING>; //PE5为中断引脚，下降沿触发
-        pinctrl-names = "default";
-		pinctrl-0 = <&ts_int_pin>; //中断pinctrl
-		touchscreen-size-x = <1024>; //屏幕分辨率
-		touchscreen-size-y = <600>;
-		touchscreen-swapped-x-y; //可选项，屏幕和触摸屏坐标反了则使能此项
-    };
+	// ft5426: touchscreen@38 { //38为设备地址（16进制）
+    //     compatible = "edt,edt-ft5406"; //兼容性配置
+    //     reg = <0x38>;//设备地址
+    //     interrupt-parent = <&pio>;//gpio中断
+    //     interrupts = <4 3 IRQ_TYPE_EDGE_FALLING>; //PE5为中断引脚，下降沿触发
+    //     pinctrl-names = "default";
+	// 	pinctrl-0 = <&ts_int_pin>; //中断pinctrl
+	// 	touchscreen-size-x = <1024>; //屏幕分辨率
+	// 	touchscreen-size-y = <600>;
+	// 	touchscreen-swapped-x-y; //可选项，屏幕和触摸屏坐标反了则使能此项
+    // };
 
 };
 
 &i2c1 {
     pinctrl-0 = <&i2c1_pins>;
     pinctrl-names = "default";
-    status = "disabled";
+    status = "okay";
 };
 
 &i2c2 {

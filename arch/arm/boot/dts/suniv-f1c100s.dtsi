@@ -57,6 +57,20 @@
 			#size-cells = <1>;
 			ranges;
 
+			sram_c: sram@1d00000 {
+				compatible = "mmio-sram";
+				reg = <0x01d00000 0x80000>;
+				#address-cells = <1>;
+				#size-cells = <1>;
+				ranges = <0 0x01d00000 0x80000>;
+
+				ve_sram: sram-section@0 {
+					compatible = "allwinner,suniv-f1c100s-sram-c",
+							 "allwinner,sun4i-a10-sram-c1";
+					reg = <0x000000 0x80000>;
+				};
+			};
+
 			sram_d: sram@10000 {
 				compatible = "mmio-sram";
 				reg = <0x00010000 0x1000>;
@@ -119,6 +133,17 @@
 			dmas = <&dma SUN4I_DMA_NORMAL 0x0c>, 
 				<&dma SUN4I_DMA_NORMAL 0x0c>;
 			dma-names = "rx", "tx";
+			status = "disabled";
+		};
+
+		cedar_ve: video-codec@1c0e000 {
+			compatible = "allwinner,suniv-f1c100s-cedar";
+			reg = <0x01c0e000 0x1000>;
+			clocks = <&ccu CLK_BUS_VE>, <&ccu CLK_VE>, <&ccu CLK_DRAM_VE>;
+			clock-names = "ahb", "mod", "ram";
+			resets = <&ccu RST_BUS_VE>;
+			interrupts = <34>;
+			allwinner,sram = <&ve_sram 1>;
 			status = "disabled";
 		};
 
@@ -288,6 +313,11 @@
 				function = "uart0";
 			};
 
+			uart1_pd_pins: uart1-pd-pins {   //RX:PD3    TX:PD4    CTS:PD2   RTS:PD1
+				pins = "PD1", "PD2", "PD3", "PD4";
+				function = "uart1";
+			};
+
 			uart2_pe_pins: uart2-pe-pins {   //RX:PE8    TX:PE7
 				pins = "PE8", "PE7";
 				function = "uart2";
@@ -312,13 +342,24 @@
 				function = "mmc0";
 			};
 
+			mmc1_pins: mmc1-pins {
+				pins = "PC0", "PC1", "PC2";
+				function = "mmc1";
+				bias-pull-up;
+			};
+
 			spi0_pins_a: spi0-pins-pc {  //CLK:PC0   CS:PC1  MISO:PC2  MOSI:PC3
 				pins = "PC0", "PC1", "PC2", "PC3";
 				function = "spi0";
 			};
 
+			spi0_pins_b: spi0-pins-pd {  //CLK:PD20   CS:PD18  MISO:PD21  MOSI:PD19
+				pins = "PD18", "PD19", "PD20", "PD21";
+				function = "spi0";
+			};
+
 			spi1_pins_a: spi1-pins-pa {	 //CLK:PA2   CS:PA0  MISO:PA3  MOSI:PA1
-				pins = "PA2", "-1", "PA3", "PA1";
+				pins = "PA2", "PA3", "PA1";
 				function = "spi1";
 			};
 
@@ -353,6 +394,32 @@
 			interrupts = <23>;
 			pinctrl-names = "default";
 			pinctrl-0 = <&mmc0_pins>;
+			vmmc-supply = <&reg_vcc3v3>;
+			status = "disabled";
+			#address-cells = <1>;
+			#size-cells = <0>;
+		};
+
+		mmc1: mmc@1c10000 {
+			compatible = "allwinner,suniv-f1c100s-mmc",
+					 "allwinner,sun7i-a20-mmc";
+			reg = <0x01c10000 0x1000>;
+			clocks = <&ccu CLK_BUS_MMC1>,
+				 <&ccu CLK_MMC1>,
+				 <&ccu CLK_MMC1_OUTPUT>,
+				 <&ccu CLK_MMC1_SAMPLE>;
+			clock-names = "ahb",
+						  "mmc",
+						  "output",
+						  "sample";
+			resets = <&ccu RST_BUS_MMC1>;
+			reset-names = "ahb";
+			interrupts = <24>;
+			pinctrl-0 = <&mmc1_pins>;
+			pinctrl-names = "default";
+			vmmc-supply = <&reg_vcc3v3>;
+			bus-width = <1>;
+			broken-cd;
 			status = "disabled";
 			#address-cells = <1>;
 			#size-cells = <0>;
