@@ -267,7 +267,7 @@ int sip_parse_events(struct esp_sip *sip, u8 *buf)
                 }
                 break;
         }
-#endif  /*TEST_MODE*/
+
 
         case SIP_EVT_SNPRINTF_TO_HOST: {
                 u8 *p = (buf + sizeof(struct sip_hdr) + sizeof(u16));
@@ -286,6 +286,7 @@ int sip_parse_events(struct esp_sip *sip, u8 *buf)
 		}
                 break;
         }
+#endif  /*TEST_MODE*/     
         case SIP_EVT_TRC_AMPDU: {
                 struct sip_evt_trc_ampdu *ep = (struct sip_evt_trc_ampdu*)(buf + SIP_CTRL_HDR_LEN);
                 struct esp_node *node = NULL;
@@ -477,9 +478,12 @@ int sip_send_ampdu_action(struct esp_pub *epub, u8 action_num, const u8 * addr, 
         switch(action_num) {
         case SIP_AMPDU_RX_START:
                 action->ssn = ssn;
+                break;
         case SIP_AMPDU_RX_STOP:
                 action->index = index;
+                break;
         case SIP_AMPDU_TX_OPERATIONAL:
+                break;
         case SIP_AMPDU_TX_STOP:
                 action->win_size = buf_size;
                 action->tid = tid;
