@@ -43,7 +43,7 @@
 	pcm5102a: pcm510x {
 		compatible = "ti,pcm5102a";
 		pcm510x,format = "i2s";
-		status = "okay";
+		status = "disabled";
 		#sound-dai-cells = <0>;
 	};
 
@@ -60,7 +60,8 @@
 		};
 
 		simple-audio-card,codec {
-			sound-dai = <&pcm5102a>;
+			// sound-dai = <&pcm5102a>;
+			sound-dai = <&pcm5122>;
 		};
 	};
 
@@ -87,7 +88,7 @@
 };
 
 &i2s0 {
-	sound-dai = <&pcm5102a>;
+	sound-dai = <&pcm5122>;
 	pinctrl-names = "default";
 	pinctrl-0 = <&i2s_pins>;
 	status = "okay";
@@ -145,19 +146,32 @@
 		compatible = "nxp,pcf8563";
 		reg = <0x51>;
 		#clock-cells = <0>;
+		status = "disabled";
     };
 
-	// ft5426: touchscreen@38 { //38为设备地址（16进制）
-    //     compatible = "edt,edt-ft5406"; //兼容性配置
-    //     reg = <0x38>;//设备地址
-    //     interrupt-parent = <&pio>;//gpio中断
-    //     interrupts = <4 3 IRQ_TYPE_EDGE_FALLING>; //PE5为中断引脚，下降沿触发
-    //     pinctrl-names = "default";
-	// 	pinctrl-0 = <&ts_int_pin>; //中断pinctrl
-	// 	touchscreen-size-x = <1024>; //屏幕分辨率
-	// 	touchscreen-size-y = <600>;
-	// 	touchscreen-swapped-x-y; //可选项，屏幕和触摸屏坐标反了则使能此项
-    // };
+	ft5426: touchscreen@38 {
+        compatible = "edt,edt-ft5406";
+        reg = <0x38>;
+        interrupt-parent = <&pio>;
+        interrupts = <4 3 IRQ_TYPE_EDGE_FALLING>;
+        pinctrl-names = "default";
+		pinctrl-0 = <&ts_int_pin>;
+		touchscreen-size-x = <1024>;
+		touchscreen-size-y = <600>;
+		touchscreen-swapped-x-y;
+		status = "disabled";
+    };
+
+	pcm5122: pcm5122@4c {
+		compatible = "ti,pcm5122";
+		reg = <0x4c>;
+		clocks = <&ccu CLK_I2S>;
+		status = "okay";
+		#sound-dai-cells = <0>;
+		AVDD-supply = <&reg_vcc3v3>;
+		DVDD-supply = <&reg_vcc3v3>;
+		CPVDD-supply = <&reg_vcc3v3>;
+	};
 
 };
 
