@@ -22,6 +22,24 @@
 		stdout-path = "serial0:115200n8";
 	};
 
+	keys {
+		compatible = "gpio-keys";
+		
+		key1{
+			label = "left-button";
+			linux,code = <114>;
+			gpios = <&pio 3 12 GPIO_ACTIVE_LOW>;	/* PD12*/
+			debounce-interval = <10>;
+		};
+
+		key2{
+			label = "right-button";
+			linux,code = <115>;
+			gpios = <&pio 3 13 GPIO_ACTIVE_LOW>;	/* PD13*/
+			debounce-interval = <10>;
+		};
+	};
+
 	leds {
 		compatible = "gpio-leds";
 
@@ -37,6 +55,13 @@
 			gpios = <&pio 4 10 GPIO_ACTIVE_LOW>; /* PE10 */
 			default-state = "off";
 			linux,default-trigger = "mmc0";
+		};
+
+		white_led {
+			label = "white_led";
+			gpios = <&pio 3 2 GPIO_ACTIVE_LOW>; /* PD2 */
+			default-state = "off";
+			linux,default-trigger = "heartbeat";
 		};
 	};
 
@@ -127,13 +152,13 @@
 &uart1 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&uart1_pd_pins>;
-	status = "okay";
+	status = "disabled";
 };
 
 &uart2 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&uart2_pe_pins>;
-	status = "okay";
+	status = "disabled";
 };
 
 &i2c0 {
