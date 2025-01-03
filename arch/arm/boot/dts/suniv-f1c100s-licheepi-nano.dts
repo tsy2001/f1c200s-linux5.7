@@ -149,43 +149,12 @@
 	status = "okay";
 };
 
-&uart1 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&uart1_pd_pins>;
-	status = "disabled";
-};
-
-&uart2 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&uart2_pe_pins>;
-	status = "disabled";
-};
 
 &i2c0 {
     pinctrl-0 = <&i2c0_pins>;
     pinctrl-names = "default";
 	clock-frequency = <100000>;
     status = "okay";
-
-	pcf8563: pcf8563@51 {
-		compatible = "nxp,pcf8563";
-		reg = <0x51>;
-		#clock-cells = <0>;
-		status = "disabled";
-    };
-
-	ft5426: touchscreen@38 {
-        compatible = "edt,edt-ft5406";
-        reg = <0x38>;
-        interrupt-parent = <&pio>;
-        interrupts = <4 3 IRQ_TYPE_EDGE_FALLING>;
-        pinctrl-names = "default";
-		pinctrl-0 = <&ts_int_pin>;
-		touchscreen-size-x = <1024>;
-		touchscreen-size-y = <600>;
-		touchscreen-swapped-x-y;
-		status = "disabled";
-    };
 
 	pcm5122: pcm5122@4c {
 		compatible = "ti,pcm5122";
@@ -277,39 +246,22 @@
 
 			partition@100000 {
 				label = "dtb";
-				reg = <0x100000 0x10000>;
+				reg = <0x100000 0x110000>;
 				read-only;
 			};
 
 			partition@110000 {
 				label = "kernel";
-				reg = <0x110000 0x400000>;
+				reg = <0x110000 0x510000>;
 				read-only;
 			};
 
 			partition@520000 {
 				label = "rootfs";
-				reg = <0x510000 0xAF0000>;
+				reg = <0x510000 0x1000000>;
 			};
 		};
 	};
 };
 
-&spi1 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&spi1_pins_a>;
-	status = "okay";
-
-	esp8089@0 {
-		status = "okay";
-		compatible = "boss,esp8089";
-		spi-cpol;
-		spi-cpha;
-		reg = <0>;
-		spi-max-frequency = <30000000>;
-		reset= <132>; //PE4
-		interrupt= <133>; //PE5
-		debug= <0>;
-	};
-};
 
