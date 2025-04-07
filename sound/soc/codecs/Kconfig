@@ -1273,6 +1273,12 @@ config SND_SOC_TAS571X
 	  Enable support for Texas Instruments TAS5707, TAS5711, TAS5717,
 	  TAS5719 and TAS5721 power amplifiers
 
+config SND_SOC_TAS5825
+	tristate "Texas Instruments TAS5825 power amplifiers"
+	depends on I2C
+	help
+	  Enable support for Texas Instruments TAS5825 power amplifiers
+
 config SND_SOC_TAS5720
 	tristate "Texas Instruments TAS5720 Mono Audio amplifier"
 	depends on I2C
