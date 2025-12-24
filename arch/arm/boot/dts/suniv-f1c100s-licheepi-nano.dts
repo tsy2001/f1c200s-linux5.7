@@ -85,17 +85,11 @@
 		};
 
 		simple-audio-card,codec {
+			// sound-dai = <&tas5825m>;
 			// sound-dai = <&pcm5102a>;
 			sound-dai = <&pcm5122>;
 		};
 	};
-
-	// beeper {
-	// 	compatible = "pwm-beeper";
-	// 	pwms = <&pwm 0 400000 399999>;
-	// 	pinctrl-names = "default";
-	// 	pinctrl-0 = <&pwm1_pin>;
-	// };
 
 	reg_vcc3v0: vcc3v0 {
         compatible = "regulator-fixed";
@@ -150,12 +144,19 @@
 	status = "okay";
 };
 
-
 &i2c0 {
     pinctrl-0 = <&i2c0_pins>;
     pinctrl-names = "default";
 	clock-frequency = <100000>;
     status = "okay";
+
+	/*tas5825m: tas5825m@4d {
+		compatible = "ti,tas5825m";
+		reg = <0x4d>;
+		status = "okay";
+		#sound-dai-cells = <0>;
+		clocks = <&ccu CLK_I2S>;
+	};*/
 
 	pcm5122: pcm5122@4c {
 		compatible = "ti,pcm5122";
@@ -234,7 +235,7 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&spi0_pins_a>;
 	status = "okay";
-	spi-max-frequency = <40000000>;
+	spi-max-frequency = <30000000>;
 
 	flash: w25q128@0 {
 		#address-cells = <1>;
