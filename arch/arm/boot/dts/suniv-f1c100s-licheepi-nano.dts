@@ -22,23 +22,23 @@
 		stdout-path = "serial0:115200n8";
 	};
 
-	keys {
+	/*keys {
 		compatible = "gpio-keys";
 		
 		key1{
 			label = "left-button";
 			linux,code = <114>;
-			gpios = <&pio 3 12 GPIO_ACTIVE_LOW>;	/* PD12*/
+			gpios = <&pio 3 12 GPIO_ACTIVE_LOW>;	// PD12
 			debounce-interval = <10>;
 		};
 
 		key2{
 			label = "right-button";
 			linux,code = <115>;
-			gpios = <&pio 3 13 GPIO_ACTIVE_LOW>;	/* PD13*/
+			gpios = <&pio 3 13 GPIO_ACTIVE_LOW>;	// PD13
 			debounce-interval = <10>;
 		};
-	};
+	};*/
 
 	leds {
 		compatible = "gpio-leds";
@@ -65,12 +65,12 @@
 		};
 	};
 
-	pcm5102a: pcm510x {
+	/*pcm5102a: pcm510x {
 		compatible = "ti,pcm5102a";
 		pcm510x,format = "i2s";
-		status = "disabled";
+		status = "okay";
 		#sound-dai-cells = <0>;
-	};
+	};*/
 
 	sound_i2s {
 		compatible = "simple-audio-card";
@@ -114,6 +114,7 @@
 
 &i2s0 {
 	sound-dai = <&pcm5122>;
+	// sound-dai = <&pcm5102a>;
 	pinctrl-names = "default";
 	pinctrl-0 = <&i2s_pins>;
 	status = "okay";
@@ -133,7 +134,7 @@
 &pwm {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pwm1_pin>;
-	status = "okay";
+	status = "disabled";
 };
 
 &mmc0 {
@@ -166,6 +167,13 @@
 		DVDD-supply = <&reg_vcc3v3>;
 		CPVDD-supply = <&reg_vcc3v3>;
 	};
+
+	/*sabre9018q2c@48 {
+		#sound-dai-cells = <0>;
+		compatible = "ess,es9018k2m";
+		reg = <0x48>;
+		status = "okay";
+	};*/
 
 };
 
@@ -240,25 +248,25 @@
 
 			partition@0 {
 				label = "u-boot";
-				reg = <0x000000 0x100000>;
+				reg = <0x000000 0x46000>;
 				read-only;
 			};
 
-			partition@100000 {
+			partition@46000 {
 				label = "dtb";
-				reg = <0x100000 0x110000>;
+				reg = <0x46000 0x48C00>;
 				read-only;
 			};
 
-			partition@110000 {
+			partition@48C00 {
 				label = "kernel";
-				reg = <0x110000 0x510000>;
+				reg = <0x48C00 0x22F400>;
 				read-only;
 			};
 
-			partition@520000 {
+			partition@22F400 {
 				label = "rootfs";
-				reg = <0x510000 0x1000000>;
+				reg = <0x22F400 0x1000000>;
 			};
 		};
 	};

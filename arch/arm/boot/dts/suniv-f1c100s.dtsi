@@ -37,11 +37,11 @@
 		};
 	};
 	
-	de: display-engine {
+	/*de: display-engine {
 		compatible = "allwinner,sun4i-a10-display-engine";
 		allwinner,pipelines = <&fe0>;
 		status = "disabled";
-	};
+	};*/
 
 	soc {
 		compatible = "simple-bus";
@@ -100,7 +100,7 @@
 			#size-cells = <0>;
 		};
 
-		spi1: spi@1c06000 {
+		/*spi1: spi@1c06000 {
 			compatible = "allwinner,suniv-spi",
 				     "allwinner,sun8i-h3-spi";
 			reg = <0x01c06000 0x1000>;
@@ -111,7 +111,7 @@
 			status = "disabled";
 			#address-cells = <1>;
 			#size-cells = <0>;
-		};
+		};*/
 
 		dma: dma-controller@1c02000 {
 			compatible = "allwinner,suniv-f1c100s-dma";
@@ -147,7 +147,7 @@
 			status = "disabled";
 		};
 
-		tcon0: lcd-controller@1c0c000 {
+		/*tcon0: lcd-controller@1c0c000 {
 			compatible = "allwinner,sun4i-a10-tcon";
 			reg = <0x01c0c000 0x1000>;
 			interrupts = <29>;
@@ -183,7 +183,7 @@
 					reg = <1>;
 				};
 			};
-		};
+		};*/
 
 		ccu: clock@1c20000 {
 			compatible = "allwinner,suniv-f1c100s-ccu";
@@ -323,14 +323,14 @@
 				function = "uart2";
 			};
 			
-			lcd_rgb666_pins: lcd-rgb666-pins {
+			/*lcd_rgb666_pins: lcd-rgb666-pins {
 				pins = "PD0", "PD1", "PD2", "PD3", "PD4",
 				       "PD5", "PD6", "PD7", "PD8", "PD9",
 				       "PD10", "PD11", "PD12", "PD13", "PD14",
 				       "PD15", "PD16", "PD17", "PD18", "PD19",
 				       "PD20", "PD21";
 				function = "lcd";
-			};
+			};*/
 
 			ts_int_pin: ts_int_pin {
 				pins = "PE3";
@@ -342,11 +342,11 @@
 				function = "mmc0";
 			};
 
-			mmc1_pins: mmc1-pins {
+			/*mmc1_pins: mmc1-pins {
 				pins = "PC0", "PC1", "PC2";
 				function = "mmc1";
 				bias-pull-up;
-			};
+			};*/
 
 			spi0_pins_a: spi0-pins-pc {  //CLK:PC0   CS:PC1  MISO:PC2  MOSI:PC3
 				pins = "PC0", "PC1", "PC2", "PC3";
@@ -358,10 +358,10 @@
 				function = "spi0";
 			};
 
-			spi1_pins_a: spi1-pins-pa {	 //CLK:PA2   CS:PA0  MISO:PA3  MOSI:PA1
+			/*spi1_pins_a: spi1-pins-pa {	 //CLK:PA2   CS:PA0  MISO:PA3  MOSI:PA1
 				pins = "PA2", "PA3", "PA1";
 				function = "spi1";
-			};
+			};*/
 
 			pwm1_pin: pwm1_pin {
 				pins = "PE6";
@@ -400,7 +400,7 @@
 			#size-cells = <0>;
 		};
 
-		mmc1: mmc@1c10000 {
+		/*mmc1: mmc@1c10000 {
 			compatible = "allwinner,suniv-f1c100s-mmc",
 					 "allwinner,sun7i-a20-mmc";
 			reg = <0x01c10000 0x1000>;
@@ -423,7 +423,7 @@
 			status = "disabled";
 			#address-cells = <1>;
 			#size-cells = <0>;
-		};
+		};*/
 
 		wdt: watchdog@1c20ca0 {
 			compatible = "allwinner,suniv-f1c100s-wdt",
@@ -479,7 +479,7 @@
 			status = "disabled";
 		};
 
-		fe0: display-frontend@1e00000 {
+		/*fe0: display-frontend@1e00000 {
 			compatible = "allwinner,sun4i-a10-display-frontend";
 			reg = <0x01e00000 0x20000>;
 			interrupts = <30>;
@@ -547,6 +547,6 @@
 					};
 				};
 			};
-		};
+		};*/
 	};
 };
