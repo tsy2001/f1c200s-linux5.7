@@ -43,25 +43,36 @@
 	leds {
 		compatible = "gpio-leds";
 
-		red_led {
-			label = "red_led";
+		green_led {
+			label = "nand-disk";
 			linux,default-trigger = "nand-disk";
 			default-state = "off";
 			gpios = <&pio 4 9 GPIO_ACTIVE_LOW>; /* PE9 */
 		};
 
-		green_led {
-			label = "green_led";
+		red_led {
+			label = "user";
 			gpios = <&pio 4 10 GPIO_ACTIVE_LOW>; /* PE10 */
 			default-state = "off";
-			linux,default-trigger = "mmc0";
 		};
 
-		white_led {
-			label = "white_led";
+		onboard_led {
+			label = "heartbeat";
 			gpios = <&pio 3 2 GPIO_ACTIVE_LOW>; /* PD2 */
 			default-state = "off";
 			linux,default-trigger = "heartbeat";
+		};
+
+		usb_switch {
+			label = "usb";
+			gpios = <&pio 3 0 GPIO_ACTIVE_LOW>; /* PD0 */
+			default-state = "on";
+		};
+
+		mute_crtl {
+			label = "mute";
+			gpios = <&pio 3 13 GPIO_ACTIVE_LOW>; /* PD13 */
+			default-state = "on";
 		};
 	};
 
@@ -104,6 +115,14 @@
 		regulator-min-microvolt = <3300000>;
 		regulator-max-microvolt = <3300000>;
 	};
+
+	// cir_pins_a: cir@0 {
+	// 	pins = "PA3";
+	// 	function = "ir";
+	// 	allwinner,muxsel = <3>;
+	// 	allwinner,drive = <1>;
+	// 	allwinner,pull = <0>;
+	// };
 };
 
 &i2s0 {
@@ -111,6 +130,12 @@
 	// sound-dai = <&pcm5102a>;
 	pinctrl-names = "default";
 	pinctrl-0 = <&i2s_pins>;
+	status = "okay";
+};
+
+&cir {
+	pinctrl-names = "default";
+	pinctrl-0 = <&cir_pins_a>;
 	status = "okay";
 };
 
@@ -134,7 +159,7 @@
 &mmc0 {
 	vmmc-supply = <&reg_vcc3v3>;
 	bus-width = <4>;
-	cd-gpios = <&pio 4 2 GPIO_ACTIVE_LOW>;
+	cd-gpios = <&pio 4 3 GPIO_ACTIVE_LOW>;
 	status = "okay";
 };
 
