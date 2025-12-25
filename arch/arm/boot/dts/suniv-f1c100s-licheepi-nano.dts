@@ -240,6 +240,7 @@
 	flash: w25q128@0 {
 		#address-cells = <1>;
 		#size-cells = <1>;
+		spi-max-frequency = <30000000>;
 		compatible = "winbond,w25q128", "jedec,spi-nor";
 		reg = <0>;
 		partitions {
@@ -249,25 +250,25 @@
 
 			partition@0 {
 				label = "u-boot";
-				reg = <0x000000 0x46000>;
+				reg = <0x000000 0x4B000>;
 				read-only;
 			};
 
-			partition@46000 {
+			partition@4B000 {
 				label = "dtb";
-				reg = <0x46000 0x48C00>;
+				reg = <0x4B000 0x5000>;
 				read-only;
 			};
 
-			partition@48C00 {
+			partition@50000 {
 				label = "kernel";
-				reg = <0x48C00 0x22F400>;
+				reg = <0x50000 0x300000>;
 				read-only;
 			};
 
-			partition@22F400 {
+			partition@350000 {
 				label = "rootfs";
-				reg = <0x22F400 0x1000000>;
+				reg = <0x350000 0x0CB0000>;
 			};
 		};
 	};
