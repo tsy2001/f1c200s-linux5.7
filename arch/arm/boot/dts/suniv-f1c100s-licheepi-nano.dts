@@ -76,12 +76,12 @@
 		};
 	};
 
-	/*pcm5102a: pcm510x {
+	pcm5102a: pcm510x {
 		compatible = "ti,pcm5102a";
 		pcm510x,format = "i2s";
 		status = "okay";
 		#sound-dai-cells = <0>;
-	};*/
+	};
 
 	sound_i2s {
 		compatible = "simple-audio-card";
@@ -115,14 +115,6 @@
 		regulator-min-microvolt = <3300000>;
 		regulator-max-microvolt = <3300000>;
 	};
-
-	// cir_pins_a: cir@0 {
-	// 	pins = "PA3";
-	// 	function = "ir";
-	// 	allwinner,muxsel = <3>;
-	// 	allwinner,drive = <1>;
-	// 	allwinner,pull = <0>;
-	// };
 };
 
 &i2s0 {
@@ -201,12 +193,6 @@
 		status = "okay";
 	};*/
 
-};
-
-&i2c1 {
-    pinctrl-0 = <&i2c1_pins>;
-    pinctrl-names = "default";
-    status = "okay";
 };
 
 &i2c2 {
