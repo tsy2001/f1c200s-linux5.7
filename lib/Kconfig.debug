@@ -707,7 +707,7 @@ config DEBUG_NOMMU_REGIONS
 	  This option causes the global tree of anonymous and private mapping
 	  regions to be regularly checked for invalid topology.
 
-config DEBUG_MEMORY_INIT
+config DEBUG_MEMORY_INIT1
 	bool "Debug memory initialisation" if EXPERT
 	default !EXPERT
 	help
