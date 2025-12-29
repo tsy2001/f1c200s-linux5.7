@@ -58,21 +58,21 @@
 
 		onboard_led {
 			label = "heartbeat";
-			gpios = <&pio 3 2 GPIO_ACTIVE_LOW>; /* PD2 */
+			gpios = <&pio 3 21 GPIO_ACTIVE_HIGH>; /* PD21 */
 			default-state = "off";
 			linux,default-trigger = "heartbeat";
 		};
 
 		usb_switch {
 			label = "usb";
-			gpios = <&pio 3 0 GPIO_ACTIVE_LOW>; /* PD0 */
+			gpios = <&pio 3 0 GPIO_ACTIVE_HIGH>; /* PD0 */
 			default-state = "on";
 		};
 
 		mute_crtl {
 			label = "mute";
-			gpios = <&pio 3 13 GPIO_ACTIVE_LOW>; /* PD13 */
-			default-state = "on";
+			gpios = <&pio 3 13 GPIO_ACTIVE_HIGH>; /* PD13 */
+			default-state = "off";
 		};
 	};
 
@@ -97,8 +97,8 @@
 
 		simple-audio-card,codec {
 			// sound-dai = <&tas5825m>;
-			// sound-dai = <&pcm5102a>;
-			sound-dai = <&pcm5122>;
+			sound-dai = <&pcm5102a>;
+			// sound-dai = <&pcm5122>;
 		};
 	};
 
@@ -118,8 +118,8 @@
 };
 
 &i2s0 {
-	sound-dai = <&pcm5122>;
-	// sound-dai = <&pcm5102a>;
+	// sound-dai = <&pcm5122>;
+	sound-dai = <&pcm5102a>;
 	pinctrl-names = "default";
 	pinctrl-0 = <&i2s_pins>;
 	status = "okay";
@@ -175,16 +175,16 @@
 		clocks = <&ccu CLK_I2S>;
 	};*/
 
-	pcm5122: pcm5122@4c {
+	/*pcm5122: pcm5122@4c {
 		compatible = "ti,pcm5122";
 		reg = <0x4c>;
 		clocks = <&ccu CLK_I2S>;
-		status = "okay";
+		status = "disabled";
 		#sound-dai-cells = <0>;
 		AVDD-supply = <&reg_vcc3v3>;
 		DVDD-supply = <&reg_vcc3v3>;
 		CPVDD-supply = <&reg_vcc3v3>;
-	};
+	};*/
 
 	/*sabre9018q2c@48 {
 		#sound-dai-cells = <0>;
