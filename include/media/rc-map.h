@@ -152,6 +152,7 @@ struct rc_map *rc_map_get(const char *name);
 
 #define RC_MAP_ADSTECH_DVB_T_PCI         "rc-adstech-dvb-t-pci"
 #define RC_MAP_ALINK_DTU_M               "rc-alink-dtu-m"
+#define RC_MAP_ALIENTEK                  "rc-alientek"
 #define RC_MAP_ANYSEE                    "rc-anysee"
 #define RC_MAP_APAC_VIEWCOMP             "rc-apac-viewcomp"
 #define RC_MAP_ASTROMETA_T2HYBRID        "rc-astrometa-t2hybrid"

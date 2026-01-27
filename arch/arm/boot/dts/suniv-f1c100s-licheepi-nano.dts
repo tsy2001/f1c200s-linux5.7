@@ -52,6 +52,7 @@
 
 		red_led {
 			label = "user";
+			linux,default-trigger = "rc-feedback";
 			gpios = <&pio 4 10 GPIO_ACTIVE_LOW>; /* PE10 */
 			default-state = "off";
 		};
@@ -128,6 +129,7 @@
 &cir {
 	pinctrl-names = "default";
 	pinctrl-0 = <&cir_pins_a>;
+	linux,rc-map-name = "rc-alientek";
 	status = "okay";
 };
 
@@ -284,5 +286,4 @@
 		};
 	};
 };
-
 
