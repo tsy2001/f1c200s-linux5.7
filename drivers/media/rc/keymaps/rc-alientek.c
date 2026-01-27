@@ -13,6 +13,10 @@ static struct rc_map_table alientek[] = {
 	/* TODO: replace the scancodes with your remote's values */
 	{ RC_SCANCODE_NEC(0x00, 0x40), KEY_PAUSE },
 	{ RC_SCANCODE_NEC(0x00, 0x47), KEY_EJECTCD },
+	{ RC_SCANCODE_NEC(0x00, 0x45), KEY_POWER },
+	{ RC_SCANCODE_NEC(0x00, 0x4A), KEY_ENTER },
+	{ RC_SCANCODE_NEC(0x00, 0x46), KEY_UP },
+	{ RC_SCANCODE_NEC(0x00, 0x15), KEY_DOWN },
 	{ RC_SCANCODE_NEC(0x00, 0x44), KEY_PREVIOUS },
 	{ RC_SCANCODE_NEC(0x00, 0x43), KEY_NEXT },
 	{ RC_SCANCODE_NEC(0x00, 0x07), KEY_VOLUMEDOWN },
