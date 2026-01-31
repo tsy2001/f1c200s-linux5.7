@@ -361,24 +361,32 @@ static int sun4i_i2s_set_clk_rate(struct snd_soc_dai *dai,
 
 static s8 sun4i_i2s_get_sr(const struct sun4i_i2s *i2s, int width)
 {
-	if (width < 16 || width > 24)
+	switch (width) {
+	case 16:
+		return 0;
+	case 20:
+		return 1;
+	case 24:
+		return 2;
+	default:
 		return -EINVAL;
-
-	if (width % 4)
-		return -EINVAL;
-
-	return (width - 16) / 4;
+	}
 }
 
 static s8 sun4i_i2s_get_wss(const struct sun4i_i2s *i2s, int width)
 {
-	if (width < 16 || width > 32)
+	switch (width) {
+	case 16:
+		return 0;
+	case 20:
+		return 1;
+	case 24:
+		return 2;
+	case 32:
+		return 3;
+	default:
 		return -EINVAL;
-
-	if (width % 4)
-		return -EINVAL;
-
-	return (width - 16) / 4;
+	}
 }
 
 static s8 sun8i_i2s_get_sr_wss(const struct sun4i_i2s *i2s, int width)
@@ -496,12 +504,19 @@ static int sun4i_i2s_hw_params(struct snd_pcm_substream *substream,
 	case 16:
 		width = DMA_SLAVE_BUSWIDTH_2_BYTES;
 		break;
+	case 32:
+		width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+		break;
 	default:
 		dev_err(dai->dev, "Unsupported physical sample width: %d\n",
 			params_physical_width(params));
 		return -EINVAL;
 	}
-	i2s->playback_dma_data.addr_width = width;
+
+	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
+		i2s->playback_dma_data.addr_width = width;
+	else
+		i2s->capture_dma_data.addr_width = width;
 
 	sr = i2s->variant->get_sr(i2s, word_size);
 	if (sr < 0)
@@ -871,14 +886,16 @@ static struct snd_soc_dai_driver sun4i_i2s_dai = {
 		.channels_min = 1,
 		.channels_max = 8,
 		.rates = SNDRV_PCM_RATE_8000_192000,
-		.formats = SNDRV_PCM_FMTBIT_S16_LE,
+		.formats = SNDRV_PCM_FMTBIT_S16_LE |
+			   SNDRV_PCM_FMTBIT_S24_LE,
 	},
 	.playback = {
 		.stream_name = "Playback",
 		.channels_min = 1,
 		.channels_max = 8,
 		.rates = SNDRV_PCM_RATE_8000_192000,
-		.formats = SNDRV_PCM_FMTBIT_S16_LE,
+		.formats = SNDRV_PCM_FMTBIT_S16_LE |
+			   SNDRV_PCM_FMTBIT_S24_LE,
 	},
 	.ops = &sun4i_i2s_dai_ops,
 	.symmetric_rates = 1,
