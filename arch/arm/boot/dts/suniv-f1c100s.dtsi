@@ -94,6 +94,9 @@
 			interrupts = <10>;
 			clocks = <&ccu CLK_BUS_SPI0>, <&ccu CLK_BUS_SPI0>;
 			clock-names = "ahb", "mod";
+			dmas = <&dma SUN4I_DMA_NORMAL 0x04>,
+			       <&dma SUN4I_DMA_NORMAL 0x04>;
+			dma-names = "rx", "tx";
 			resets = <&ccu RST_BUS_SPI0>;
 			status = "disabled";
 			#address-cells = <1>;
@@ -107,6 +110,8 @@
 			interrupts = <11>;
 			clocks = <&ccu CLK_BUS_SPI1>, <&ccu CLK_BUS_SPI1>;
 			clock-names = "ahb", "mod";
+			dmas = <&dma 5>, <&dma 5>;
+			dma-names = "rx", "tx";
 			resets = <&ccu RST_BUS_SPI1>;
 			status = "disabled";
 			#address-cells = <1>;
@@ -120,6 +125,7 @@
 			clocks = <&ccu CLK_BUS_DMA>;
 			resets = <&ccu RST_BUS_DMA>;
 			#dma-cells = <2>;
+			status = "okay";
 		};
 
 		codec: codec@1c23c00 {
@@ -362,6 +368,12 @@
 				function = "mmc1";
 				bias-pull-up;
 			};*/
+
+			mmc0_cd_pin: mmc0-cd-pin {
+				pins = "PE3";
+				function = "gpio_in";
+				bias-pull-up;
+			};
 
 			spi0_pins_a: spi0-pins-pc {  //CLK:PC0   CS:PC1  MISO:PC2  MOSI:PC3
 				pins = "PC0", "PC1", "PC2", "PC3";
