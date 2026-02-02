@@ -796,7 +796,7 @@ mv64xxx_of_config(struct mv64xxx_i2c_data *drv_data,
 {
 	const struct of_device_id *device;
 	struct device_node *np = dev->of_node;
-	u32 bus_freq, tclk;
+	u32 bus_freq, tclk, actual_freq;
 	int rc = 0;
 
 	/* CLK is mandatory when using DT to describe the i2c bus. We
@@ -810,7 +810,7 @@ mv64xxx_of_config(struct mv64xxx_i2c_data *drv_data,
 	tclk = clk_get_rate(drv_data->clk);
 
 	if (of_property_read_u32(np, "clock-frequency", &bus_freq))
-		bus_freq = I2C_MAX_STANDARD_MODE_FREQ; /* 100kHz by default */
+		bus_freq = I2C_MAX_TURBO_MODE_FREQ; /* 100kHz by default */
 
 	if (of_device_is_compatible(np, "allwinner,sun4i-a10-i2c") ||
 	    of_device_is_compatible(np, "allwinner,sun6i-a31-i2c"))
@@ -820,6 +820,12 @@ mv64xxx_of_config(struct mv64xxx_i2c_data *drv_data,
 		rc = -EINVAL;
 		goto out;
 	}
+	actual_freq = mv64xxx_calc_freq(drv_data, tclk,
+					drv_data->freq_n, drv_data->freq_m);
+	dev_info(dev,
+		 "i2c clock: tclk=%uHz request=%uHz actual=%uHz (m=%u n=%u)\n",
+		 tclk, bus_freq, actual_freq,
+		 drv_data->freq_m, drv_data->freq_n);
 
 	drv_data->rstc = devm_reset_control_get_optional_exclusive(dev, NULL);
 	if (IS_ERR(drv_data->rstc)) {
