@@ -153,6 +153,7 @@
 &mmc0 {
 	vmmc-supply = <&reg_vcc3v3>;
 	bus-width = <4>;
+	pinctrl-0 = <&mmc0_pins &mmc0_cd_pin>;
 	cd-gpios = <&pio 4 3 GPIO_ACTIVE_LOW>;
 	status = "okay";
 };
@@ -200,7 +201,7 @@
 &i2c2 {
     pinctrl-0 = <&i2c2_pins>;
     pinctrl-names = "default";
-	clock-frequency = <1000000>;
+	clock-frequency = <5000000>;
     status = "okay";
 };
 
