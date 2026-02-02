@@ -393,6 +393,7 @@ static const struct sunxi_pinctrl_desc suniv_f1c100s_pinctrl_data = {
 	.pins = suniv_f1c100s_pins,
 	.npins = ARRAY_SIZE(suniv_f1c100s_pins),
 	.irq_banks = 3,
+	.disable_strict_mode = true,
 };
 
 static int suniv_pinctrl_probe(struct platform_device *pdev)
