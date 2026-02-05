@@ -177,7 +177,7 @@ config SYMBOLIC_ERRNAME
 config DEBUG_BUGVERBOSE
 	bool "Verbose BUG() reporting (adds 70K)" if DEBUG_KERNEL && EXPERT
 	depends on BUG && (GENERIC_BUG || HAVE_DEBUG_BUGVERBOSE)
-	default y
+	default n
 	help
 	  Say Y here to make BUG() panics output the file name and line number
 	  of the BUG call as well as the EIP and oops trace.  This aids
@@ -709,7 +709,7 @@ config DEBUG_NOMMU_REGIONS
 
 config DEBUG_MEMORY_INIT1
 	bool "Debug memory initialisation" if EXPERT
-	default !EXPERT
+	default n
 	help
 	  Enable this for additional checks during memory initialisation.
 	  The sanity checks verify aspects of the VM such as the memory model

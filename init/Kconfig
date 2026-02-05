@@ -794,6 +794,7 @@ config NUMA_BALANCING_DEFAULT_ENABLED
 
 menuconfig CGROUPS
 	bool "Control Group support"
+	default n
 	select KERNFS
 	help
 	  This option adds support for grouping sets of processes together, for
@@ -1056,7 +1057,7 @@ endif # CGROUPS
 menuconfig NAMESPACES
 	bool "Namespaces support" if EXPERT
 	depends on MULTIUSER
-	default !EXPERT
+	default n
 	help
 	  Provides the way to make tasks work with different objects using
 	  the same id. For example same IPC id may refer to different objects
@@ -1424,7 +1425,7 @@ config BUG
 
 config ELF_CORE
 	depends on COREDUMP
-	default y
+	default n
 	bool "Enable ELF core dumps" if EXPERT
 	help
 	  Enable support for generating core dumps. Disabling saves about 4k.
@@ -1516,7 +1517,7 @@ config SHMEM
 
 config AIO
 	bool "Enable AIO support" if EXPERT
-	default y
+	default n
 	help
 	  This option enables POSIX asynchronous I/O which may by used
 	  by some high performance threaded applications. Disabling
@@ -1525,7 +1526,7 @@ config AIO
 config IO_URING
 	bool "Enable IO uring support" if EXPERT
 	select IO_WQ
-	default y
+	default n
 	help
 	  This option enables support for the io_uring interface, enabling
 	  applications to submit and complete IO through submission and
@@ -1560,7 +1561,7 @@ config MEMBARRIER
 
 config KALLSYMS
 	bool "Load all symbols for debugging/ksymoops" if EXPERT
-	default y
+	default n
 	help
 	  Say Y here to let the kernel print out symbolic crash information and
 	  symbolic stack backtraces. This increases the size of the kernel
@@ -1763,7 +1764,7 @@ config VM_EVENT_COUNTERS
 	  if VM event counters are disabled.
 
 config SLUB_DEBUG1
-	default y
+	default n
 	bool "Enable SLUB debugging support" if EXPERT
 	depends on SLUB && SYSFS
 	help
