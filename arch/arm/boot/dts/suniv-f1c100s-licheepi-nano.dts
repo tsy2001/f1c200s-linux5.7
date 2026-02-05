@@ -154,7 +154,7 @@
 	vmmc-supply = <&reg_vcc3v3>;
 	bus-width = <4>;
 	pinctrl-0 = <&mmc0_pins &mmc0_cd_pin>;
-	cd-gpios = <&pio 4 3 GPIO_ACTIVE_LOW>;
+	cd-gpios = <&pio 4 2 GPIO_ACTIVE_LOW>;
 	status = "okay";
 };
 
@@ -210,12 +210,12 @@
 };
 
 &usb_otg {
-	dr_mode = "host";  // otg / host / peripheral
+	dr_mode = "otg";  // otg / host / peripheral
 	status = "okay";
 };
 
 &usbphy {
-	//usb0_id_det-gpio = <&pio 4 2 GPIO_ACTIVE_HIGH>; /* PE2 */
+	usb0_id_det-gpio = <&pio 3 1 GPIO_ACTIVE_LOW>; /* PD1 */
 	status = "okay";
 };
 
