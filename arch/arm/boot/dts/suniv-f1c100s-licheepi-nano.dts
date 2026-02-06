@@ -43,39 +43,25 @@
 	leds {
 		compatible = "gpio-leds";
 
-		red_led {
-			label = "red_led";
+		green_led {
+			label = "green_led";
 			linux,default-trigger = "heartbeat";
 			gpios = <&pio 4 9 GPIO_ACTIVE_LOW>; /* PE9 */
 		};
 
-		green_led {
-			label = "green_led";
+		red_led {
+			label = "red_led";
 			gpios = <&pio 4 10 GPIO_ACTIVE_LOW>; /* PE10 */
 			default-state = "off";
 			linux,default-trigger = "nand-disk";
 		};
 	};
 
-	// beeper {
-	// 	compatible = "pwm-beeper";
-	// 	pwms = <&pwm 0 400000 399999>;
-	// 	pinctrl-names = "default";
-	// 	pinctrl-0 = <&pwm1_pin>;
-	// };
-
-	reg_vcc3v0: vcc3v0 {
-        compatible = "regulator-fixed";
-        regulator-name = "vcc3v0";
-        regulator-min-microvolt = <3000000>;
-        regulator-max-microvolt = <3000000>;
-    };
-
-	reg_vcc3v3: vcc3v3 {
-		compatible = "regulator-fixed";
-		regulator-name = "vcc3v3";
-		regulator-min-microvolt = <3300000>;
-		regulator-max-microvolt = <3300000>;
+	beeper {
+		compatible = "pwm-beeper";
+		pwms = <&pwm 0 400000 399999>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pwm1_pin>;
 	};
 };
 
@@ -100,6 +86,9 @@
     allwinner,audio-routing =
     "Headphone", "HP",
     "Headphone", "HPCOM",
+	"LINEIN", "Line In",
+	"FMINL", "Left FM In",
+	"FMINR", "Right FM In",
     "MIC", "Mic";
     status = "okay";
 };
@@ -113,7 +102,7 @@
 &mmc0 {
 	vmmc-supply = <&reg_vcc3v3>;
 	bus-width = <4>;
-	broken-cd;
+	cd-gpios = <&pio 4 2 GPIO_ACTIVE_LOW>;
 	status = "okay";
 };
 
@@ -212,13 +201,14 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&spi0_pins_a>;
 	status = "okay";
+	spi-max-frequency = <50000000>;
 
 	flash: w25q128@0 {
 		#address-cells = <1>;
 		#size-cells = <1>;
+		spi-max-frequency = <50000000>;
 		compatible = "winbond,w25q128", "jedec,spi-nor";
 		reg = <0>;
-		spi-max-frequency = <50000000>;
 		partitions {
 			compatible = "fixed-partitions";
 			#address-cells = <1>;
@@ -226,25 +216,25 @@
 
 			partition@0 {
 				label = "u-boot";
-				reg = <0x000000 0x100000>;
+				reg = <0x000000 0x4B000>;
 				read-only;
 			};
 
-			partition@100000 {
+			partition@4B000 {
 				label = "dtb";
-				reg = <0x100000 0x10000>;
+				reg = <0x4B000 0x5000>;
 				read-only;
 			};
 
-			partition@110000 {
+			partition@50000 {
 				label = "kernel";
-				reg = <0x110000 0x400000>;
+				reg = <0x50000 0x300000>;
 				read-only;
 			};
 
-			partition@520000 {
+			partition@350000 {
 				label = "rootfs";
-				reg = <0x510000 0xAF0000>;
+				reg = <0x350000 0x0CB0000>;
 			};
 		};
 	};
@@ -254,6 +244,7 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&spi1_pins_a>;
 	status = "okay";
+	spi-max-frequency = <50000000>;
 
 	esp8089@0 {
 		status = "okay";
@@ -261,7 +252,7 @@
 		spi-cpol;
 		spi-cpha;
 		reg = <0>;
-		spi-max-frequency = <30000000>;
+		spi-max-frequency = <50000000>;
 		reset= <132>; //PE4
 		interrupt= <133>; //PE5
 		debug= <0>;

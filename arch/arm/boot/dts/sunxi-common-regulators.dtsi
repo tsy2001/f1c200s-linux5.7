@@ -108,4 +108,46 @@
 		regulator-min-microvolt = <5000000>;
 		regulator-max-microvolt = <5000000>;
 	};
+
+	reg_vcc_pa: vcc_pa {
+        compatible = "regulator-fixed";
+        regulator-name = "vcc-pa";
+        regulator-min-microvolt = <3000000>;
+        regulator-max-microvolt = <3000000>;
+    };
+
+	reg_vcc_pc: vcc_pc {
+        compatible = "regulator-fixed";
+        regulator-name = "vcc-pc";
+        regulator-min-microvolt = <3000000>;
+        regulator-max-microvolt = <3000000>;
+    };
+
+	reg_vcc_pe: vcc_pe {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc-pe";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+	};
+
+	reg_vcc_pd: vcc_pd {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc-pd";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+	};
+
+	reg_vcc_pf: vcc_pf {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc-pf";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+	};
+
+	reg_vcc: vcc {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+	};
 };
