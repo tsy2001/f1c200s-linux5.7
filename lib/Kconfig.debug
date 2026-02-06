@@ -564,6 +564,7 @@ config SLUB_STATS
 	  Try running: slabinfo -DA
 
 config HAVE_DEBUG_KMEMLEAK
+	default n
 	bool
 
 config DEBUG_KMEMLEAK
@@ -1050,7 +1051,7 @@ menu "Lock Debugging (spinlocks, mutexes, etc...)"
 config LOCK_DEBUGGING_SUPPORT
 	bool
 	depends on TRACE_IRQFLAGS_SUPPORT && STACKTRACE_SUPPORT && LOCKDEP_SUPPORT
-	default y
+	default n
 
 config PROVE_LOCKING
 	bool "Lock debugging: prove locking correctness"

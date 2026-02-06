@@ -9,9 +9,6 @@ config HAVE_ARCH_KASAN_SW_TAGS
 config	HAVE_ARCH_KASAN_VMALLOC
 	bool
 
-config CC_HAS_KASAN_GENERIC
-	def_bool $(cc-option, -fsanitize=kernel-address)
-
 config CC_HAS_KASAN_SW_TAGS
 	def_bool $(cc-option, -fsanitize=kernel-hwaddress)
 
@@ -125,7 +122,6 @@ config KASAN_STACK_ENABLE
 
 config KASAN_STACK
 	int
-	default 1 if KASAN_STACK_ENABLE || CC_IS_GCC
 	default 0
 
 config KASAN_S390_4_LEVEL_PAGING

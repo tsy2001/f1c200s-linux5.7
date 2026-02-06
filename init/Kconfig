@@ -1692,6 +1692,7 @@ config EMBEDDED
 	  for configuration.
 
 config HAVE_PERF_EVENTS
+	default n
 	bool
 	help
 	  See tools/perf/design.txt for details.
