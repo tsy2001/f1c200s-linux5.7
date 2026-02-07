@@ -241,7 +241,9 @@
 		#address-cells = <1>;
 		#size-cells = <1>;
 		spi-max-frequency = <50000000>;
-		compatible = "winbond,w25q128", "jedec,spi-nor";
+		compatible = "winbond,w25q128", 
+		"gigadevice,gd25q128", "gigadevice,gd25q256",
+		"jedec,spi-nor";
 		reg = <0>;
 		partitions {
 			compatible = "fixed-partitions";
@@ -268,7 +270,7 @@
 
 			partition@350000 {
 				label = "rootfs";
-				reg = <0x350000 0x0CB0000>;
+				reg = <0x350000 0x0000000>;
 			};
 		};
 	};
