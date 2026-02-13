@@ -103,20 +103,21 @@
 			#size-cells = <0>;
 		};
 
-		/*spi1: spi@1c06000 {
+		spi1: spi@1c06000 {
 			compatible = "allwinner,suniv-spi",
 				     "allwinner,sun8i-h3-spi";
 			reg = <0x01c06000 0x1000>;
 			interrupts = <11>;
 			clocks = <&ccu CLK_BUS_SPI1>, <&ccu CLK_BUS_SPI1>;
 			clock-names = "ahb", "mod";
-			dmas = <&dma 5>, <&dma 5>;
+			dmas = <&dma SUN4I_DMA_NORMAL 0x05>, 
+				   <&dma SUN4I_DMA_NORMAL 0x05>;
 			dma-names = "rx", "tx";
 			resets = <&ccu RST_BUS_SPI1>;
 			status = "disabled";
 			#address-cells = <1>;
 			#size-cells = <0>;
-		};*/
+		};
 
 		dma: dma-controller@1c02000 {
 			compatible = "allwinner,suniv-f1c100s-dma";
@@ -363,11 +364,11 @@
 				function = "mmc0";
 			};
 
-			/*mmc1_pins: mmc1-pins {
+			mmc1_pins: mmc1-pins {
 				pins = "PC0", "PC1", "PC2";
 				function = "mmc1";
 				bias-pull-up;
-			};*/
+			};
 
 			mmc0_cd_pin: mmc0-cd-pin {
 				pins = "PE3";
@@ -385,10 +386,10 @@
 				function = "spi0";
 			};
 
-			/*spi1_pins_a: spi1-pins-pa {	 //CLK:PA2   CS:PA0  MISO:PA3  MOSI:PA1
+			spi1_pins_a: spi1-pins-pa {	 //CLK:PA2   CS:PA0  MISO:PA3  MOSI:PA1
 				pins = "PA2", "PA3", "PA1";
 				function = "spi1";
-			};*/
+			};
 
 			pwm1_pin: pwm1_pin {
 				pins = "PE6";
@@ -427,7 +428,7 @@
 			#size-cells = <0>;
 		};
 
-		/*mmc1: mmc@1c10000 {
+		mmc1: mmc@1c10000 {
 			compatible = "allwinner,suniv-f1c100s-mmc",
 					 "allwinner,sun7i-a20-mmc";
 			reg = <0x01c10000 0x1000>;
@@ -450,7 +451,7 @@
 			status = "disabled";
 			#address-cells = <1>;
 			#size-cells = <0>;
-		};*/
+		};
 
 		wdt: watchdog@1c20ca0 {
 			compatible = "allwinner,suniv-f1c100s-wdt",
