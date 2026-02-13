@@ -476,6 +476,7 @@ static int sun4i_usb_phy_set_mode(struct phy *_phy,
 	struct sun4i_usb_phy *phy = phy_get_drvdata(_phy);
 	struct sun4i_usb_phy_data *data = to_sun4i_usb_phy_data(phy);
 	int new_mode;
+	printk("sun4i_usb_phy_set_mode: index=%d mode=%d, id_det=%d\n", phy->index, mode, data->dr_mode);
 
 	if (phy->index != 0) {
 		if (mode == PHY_MODE_USB_HOST)
@@ -707,15 +708,32 @@ static int sun4i_usb_phy_probe(struct platform_device *pdev)
 	data->id_det_gpio = devm_gpiod_get_optional(dev, "usb0_id_det",
 						    GPIOD_IN);
 	if (IS_ERR(data->id_det_gpio)) {
-		dev_err(dev, "Couldn't request ID GPIO\n");
-		return PTR_ERR(data->id_det_gpio);
+		ret = PTR_ERR(data->id_det_gpio);
+		if (ret == -EPROBE_DEFER) {
+			dev_dbg(dev, "Deferring probe, couldn't request ID GPIO: %d\n",
+				ret);
+			return ret;
+		}
+		// 如果请求ID GPIO失败，继续进行初始化
+		dev_warn(dev, "Couldn't request ID GPIO: %d, continuing without it\n",
+			 ret);
+		data->id_det_gpio = NULL;
 	}
 
 	data->vbus_det_gpio = devm_gpiod_get_optional(dev, "usb0_vbus_det",
 						      GPIOD_IN);
 	if (IS_ERR(data->vbus_det_gpio)) {
-		dev_err(dev, "Couldn't request VBUS detect GPIO\n");
-		return PTR_ERR(data->vbus_det_gpio);
+		ret = PTR_ERR(data->vbus_det_gpio);
+		if (ret == -EPROBE_DEFER) {
+			dev_dbg(dev,
+				"Deferring probe, couldn't request VBUS detect GPIO: %d\n",
+				ret);
+			return ret;
+		}
+		dev_warn(dev,
+			 "Couldn't request VBUS detect GPIO: %d, continuing without it\n",
+			 ret);
+		data->vbus_det_gpio = NULL;
 	}
 
 	if (of_find_property(np, "usb0_vbus_power-supply", NULL)) {

@@ -90,10 +90,18 @@ struct sunxi_glue {
 static void sunxi_musb_work(struct work_struct *work)
 {
 	struct sunxi_glue *glue = container_of(work, struct sunxi_glue, work);
+	bool enabled = test_bit(SUNXI_MUSB_FL_ENABLED, &glue->flags);
 	bool vbus_on, phy_on;
 
-	if (!test_bit(SUNXI_MUSB_FL_ENABLED, &glue->flags))
+	/*
+	 * Mode switching via sysfs can happen while the core is not enabled.
+	 * In that case, still propagate pending PHY mode changes.
+	 */
+	if (!enabled) {
+		if (test_and_clear_bit(SUNXI_MUSB_FL_PHY_MODE_PEND, &glue->flags))
+			phy_set_mode(glue->phy, glue->phy_mode);
 		return;
+	}
 
 	if (test_and_clear_bit(SUNXI_MUSB_FL_HOSTMODE_PEND, &glue->flags)) {
 		struct musb *musb = glue->musb;
@@ -325,6 +333,7 @@ static int sunxi_musb_set_mode(struct musb *musb, u8 mode)
 {
 	struct sunxi_glue *glue = dev_get_drvdata(musb->controller->parent);
 	enum phy_mode new_mode;
+	int host_state;
 
 	switch (mode) {
 	case MUSB_HOST:
@@ -351,8 +360,34 @@ static int sunxi_musb_set_mode(struct musb *musb, u8 mode)
 		return -EINVAL;
 	}
 
+	// 强制启动 MUSB 核心以处理 HOST/PERIPHERAL 请求
+	if (musb->is_initialized && mode != MUSB_OTG)
+		musb_start(musb);
+
 	if (musb->port1_status & USB_PORT_STAT_ENABLE)
 		musb_root_disconnect(musb);
+
+	// Sysfs 同时更改 PHY 模式和 MUSB 角色位
+	switch (mode) {
+	case MUSB_HOST:
+		set_bit(SUNXI_MUSB_FL_HOSTMODE, &glue->flags);
+		set_bit(SUNXI_MUSB_FL_HOSTMODE_PEND, &glue->flags);
+		break;
+	case MUSB_PERIPHERAL:
+		clear_bit(SUNXI_MUSB_FL_HOSTMODE, &glue->flags);
+		set_bit(SUNXI_MUSB_FL_HOSTMODE_PEND, &glue->flags);
+		break;
+	case MUSB_OTG:
+		host_state = extcon_get_state(glue->extcon, EXTCON_USB_HOST);
+		if (host_state > 0)
+			set_bit(SUNXI_MUSB_FL_HOSTMODE, &glue->flags);
+		else
+			clear_bit(SUNXI_MUSB_FL_HOSTMODE, &glue->flags);
+		set_bit(SUNXI_MUSB_FL_HOSTMODE_PEND, &glue->flags);
+		break;
+	default:
+		break;
+	}
 
 	/*
 	 * phy_set_mode may sleep, and we're called with a spinlock held,
@@ -665,87 +700,86 @@ static struct musb_hdrc_config sunxi_musb_hdrc_config_h3 = {
 
 static int sunxi_musb_probe(struct platform_device *pdev)
 {
-	struct musb_hdrc_platform_data	pdata;
-	struct platform_device_info	pinfo;
-	struct sunxi_glue		*glue;
-	struct device_node		*np = pdev->dev.of_node;
-	int ret;
+    struct musb_hdrc_platform_data    pdata;
+    struct platform_device_info    pinfo;
+    struct sunxi_glue        *glue;
+    struct device_node        *np = pdev->dev.of_node;
+    int ret;
 
-	if (!np) {
-		dev_err(&pdev->dev, "Error no device tree node found\n");
-		return -EINVAL;
-	}
+    if (!np) {
+        dev_err(&pdev->dev, "Error no device tree node found\n");
+        return -EINVAL;
+    }
 
-	glue = devm_kzalloc(&pdev->dev, sizeof(*glue), GFP_KERNEL);
-	if (!glue)
-		return -ENOMEM;
+    glue = devm_kzalloc(&pdev->dev, sizeof(*glue), GFP_KERNEL);
+    if (!glue)
+        return -ENOMEM;
 
-	memset(&pdata, 0, sizeof(pdata));
-	switch (usb_get_dr_mode(&pdev->dev)) {
+    memset(&pdata, 0, sizeof(pdata));
+    switch (usb_get_dr_mode(&pdev->dev)) {
 #if defined CONFIG_USB_MUSB_DUAL_ROLE || defined CONFIG_USB_MUSB_HOST
-	case USB_DR_MODE_HOST:
-		pdata.mode = MUSB_HOST;
-		glue->phy_mode = PHY_MODE_USB_HOST;
-		break;
+    case USB_DR_MODE_HOST:
+        pdata.mode = MUSB_HOST;
+        glue->phy_mode = PHY_MODE_USB_HOST;
+        break;
 #endif
 #if defined CONFIG_USB_MUSB_DUAL_ROLE || defined CONFIG_USB_MUSB_GADGET
-	case USB_DR_MODE_PERIPHERAL:
-		pdata.mode = MUSB_PERIPHERAL;
-		glue->phy_mode = PHY_MODE_USB_DEVICE;
-		break;
+    case USB_DR_MODE_PERIPHERAL:
+        pdata.mode = MUSB_PERIPHERAL;
+        glue->phy_mode = PHY_MODE_USB_DEVICE;
+        break;
 #endif
 #ifdef CONFIG_USB_MUSB_DUAL_ROLE
-	case USB_DR_MODE_OTG:
-		pdata.mode = MUSB_OTG;
-		glue->phy_mode = PHY_MODE_USB_OTG;
-		break;
+    case USB_DR_MODE_OTG:
+        pdata.mode = MUSB_OTG;
+        glue->phy_mode = PHY_MODE_USB_OTG;
+        break;
 #endif
-	default:
-		dev_err(&pdev->dev, "Invalid or missing 'dr_mode' property\n");
-		return -EINVAL;
-	}
-	pdata.platform_ops	= &sunxi_musb_ops;
-	if (!of_device_is_compatible(np, "allwinner,sun8i-h3-musb"))
-		pdata.config = &sunxi_musb_hdrc_config;
-	else
-		pdata.config = &sunxi_musb_hdrc_config_h3;
+    default:
+        dev_err(&pdev->dev, "Invalid or missing 'dr_mode' property\n");
+        return -EINVAL;
+    }
+    pdata.platform_ops    = &sunxi_musb_ops;
+    if (!of_device_is_compatible(np, "allwinner,sun8i-h3-musb"))
+        pdata.config = &sunxi_musb_hdrc_config;
+    else
+        pdata.config = &sunxi_musb_hdrc_config_h3;
 
-	glue->dev = &pdev->dev;
-	INIT_WORK(&glue->work, sunxi_musb_work);
-	glue->host_nb.notifier_call = sunxi_musb_host_notifier;
+    glue->dev = &pdev->dev;
+    INIT_WORK(&glue->work, sunxi_musb_work);
+    glue->host_nb.notifier_call = sunxi_musb_host_notifier;
 
-	if (of_device_is_compatible(np, "allwinner,sun4i-a10-musb") ||
-	    of_device_is_compatible(np, "allwinner,suniv-musb")) {
- 		set_bit(SUNXI_MUSB_FL_HAS_SRAM, &glue->flags);
-	}
+    if (of_device_is_compatible(np, "allwinner,sun4i-a10-musb")||
+        of_device_is_compatible(np, "allwinner,suniv-musb")){ //新增判断项代码
+        set_bit(SUNXI_MUSB_FL_HAS_SRAM, &glue->flags);
+    }
+    if (of_device_is_compatible(np, "allwinner,sun6i-a31-musb"))
+        set_bit(SUNXI_MUSB_FL_HAS_RESET, &glue->flags);
 
-	if (of_device_is_compatible(np, "allwinner,sun6i-a31-musb"))
-		set_bit(SUNXI_MUSB_FL_HAS_RESET, &glue->flags);
+    if (of_device_is_compatible(np, "allwinner,sun8i-a33-musb") ||
+        of_device_is_compatible(np, "allwinner,sun8i-h3-musb") ||
+        of_device_is_compatible(np, "allwinner,suniv-musb")) {  //新增判断项代码
+        set_bit(SUNXI_MUSB_FL_HAS_RESET, &glue->flags);
+        set_bit(SUNXI_MUSB_FL_NO_CONFIGDATA, &glue->flags);
+    }
 
-	if (of_device_is_compatible(np, "allwinner,sun8i-a33-musb") ||
-	    of_device_is_compatible(np, "allwinner,sun8i-h3-musb") ||
-	    of_device_is_compatible(np, "allwinner,suniv-musb")) {
- 		set_bit(SUNXI_MUSB_FL_HAS_RESET, &glue->flags);
- 		set_bit(SUNXI_MUSB_FL_NO_CONFIGDATA, &glue->flags);
- 	}
+    glue->clk = devm_clk_get(&pdev->dev, NULL);
+    if (IS_ERR(glue->clk)) {
+        dev_err(&pdev->dev, "Error getting clock: %ld\n",
+            PTR_ERR(glue->clk));
+        return PTR_ERR(glue->clk);
+    }
 
-	glue->clk = devm_clk_get(&pdev->dev, NULL);
-	if (IS_ERR(glue->clk)) {
-		dev_err(&pdev->dev, "Error getting clock: %ld\n",
-			PTR_ERR(glue->clk));
-		return PTR_ERR(glue->clk);
-	}
-
-	if (test_bit(SUNXI_MUSB_FL_HAS_RESET, &glue->flags)) {
-		glue->rst = devm_reset_control_get(&pdev->dev, NULL);
-		if (IS_ERR(glue->rst)) {
-			if (PTR_ERR(glue->rst) == -EPROBE_DEFER)
-				return -EPROBE_DEFER;
-			dev_err(&pdev->dev, "Error getting reset %ld\n",
-				PTR_ERR(glue->rst));
-			return PTR_ERR(glue->rst);
-		}
-	}
+    if (test_bit(SUNXI_MUSB_FL_HAS_RESET, &glue->flags)) {
+        glue->rst = devm_reset_control_get(&pdev->dev, NULL);
+        if (IS_ERR(glue->rst)) {
+            if (PTR_ERR(glue->rst) == -EPROBE_DEFER)
+                return -EPROBE_DEFER;
+            dev_err(&pdev->dev, "Error getting reset %ld\n",
+                PTR_ERR(glue->rst));
+            return PTR_ERR(glue->rst);
+        }
+    }
 
 	glue->extcon = extcon_get_edev_by_phandle(&pdev->dev, 0);
 	if (IS_ERR(glue->extcon)) {
