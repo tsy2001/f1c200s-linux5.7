@@ -9,6 +9,15 @@ config SENSORS_LIS3LV02D
 	tristate
 	depends on INPUT
 
+config FIRE_MPU6050_I2C
+	tristate "custom mpu6050 driver"
+	depends on I2C
+	help
+	  Say Y here if you have mpu6050 hooked to an I2C bus.
+
+	  To compile this driver as a module, choose M here: the
+	  module will be called mpu6050.ko
+
 config AD525X_DPOT
 	tristate "Analog Devices Digital Potentiometers"
 	depends on (I2C || SPI) && SYSFS

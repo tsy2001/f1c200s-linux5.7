@@ -1399,7 +1399,7 @@ int inv_mpu_core_probe(struct regmap *regmap, int irq, const char *name,
 	struct device *dev = regmap_get_device(regmap);
 	int result;
 	struct irq_data *desc;
-	int irq_type;
+	int irq_type = 0;
 
 	indio_dev = devm_iio_device_alloc(dev, sizeof(*st));
 	if (!indio_dev)
@@ -1430,29 +1430,31 @@ int inv_mpu_core_probe(struct regmap *regmap, int irq, const char *name,
 		st->plat_data = *pdata;
 	}
 
-	desc = irq_get_irq_data(irq);
-	if (!desc) {
-		dev_err(dev, "Could not find IRQ %d\n", irq);
-		return -EINVAL;
-	}
+	if (irq > 0) {
+		desc = irq_get_irq_data(irq);
+		if (!desc) {
+			dev_err(dev, "Could not find IRQ %d\n", irq);
+			return -EINVAL;
+		}
 
-	irq_type = irqd_get_trigger_type(desc);
-	if (!irq_type)
-		irq_type = IRQF_TRIGGER_RISING;
-	if (irq_type & IRQF_TRIGGER_RISING)	// rising or both-edge
-		st->irq_mask = INV_MPU6050_ACTIVE_HIGH;
-	else if (irq_type == IRQF_TRIGGER_FALLING)
-		st->irq_mask = INV_MPU6050_ACTIVE_LOW;
-	else if (irq_type == IRQF_TRIGGER_HIGH)
-		st->irq_mask = INV_MPU6050_ACTIVE_HIGH |
-			INV_MPU6050_LATCH_INT_EN;
-	else if (irq_type == IRQF_TRIGGER_LOW)
-		st->irq_mask = INV_MPU6050_ACTIVE_LOW |
-			INV_MPU6050_LATCH_INT_EN;
-	else {
-		dev_err(dev, "Invalid interrupt type 0x%x specified\n",
-			irq_type);
-		return -EINVAL;
+		irq_type = irqd_get_trigger_type(desc);
+		if (!irq_type)
+			irq_type = IRQF_TRIGGER_RISING;
+		if (irq_type & IRQF_TRIGGER_RISING)	// rising or both-edge
+			st->irq_mask = INV_MPU6050_ACTIVE_HIGH;
+		else if (irq_type == IRQF_TRIGGER_FALLING)
+			st->irq_mask = INV_MPU6050_ACTIVE_LOW;
+		else if (irq_type == IRQF_TRIGGER_HIGH)
+			st->irq_mask = INV_MPU6050_ACTIVE_HIGH |
+				INV_MPU6050_LATCH_INT_EN;
+		else if (irq_type == IRQF_TRIGGER_LOW)
+			st->irq_mask = INV_MPU6050_ACTIVE_LOW |
+				INV_MPU6050_LATCH_INT_EN;
+		else {
+			dev_err(dev, "Invalid interrupt type 0x%x specified\n",
+				irq_type);
+			return -EINVAL;
+		}
 	}
 
 	st->vdd_supply = devm_regulator_get(dev, "vdd");
@@ -1572,20 +1574,24 @@ int inv_mpu_core_probe(struct regmap *regmap, int irq, const char *name,
 	}
 
 	indio_dev->info = &mpu_info;
-	indio_dev->modes = INDIO_BUFFER_TRIGGERED;
+	indio_dev->modes = INDIO_DIRECT_MODE;
 
-	result = devm_iio_triggered_buffer_setup(dev, indio_dev,
-						 iio_pollfunc_store_time,
-						 inv_mpu6050_read_fifo,
-						 NULL);
-	if (result) {
-		dev_err(dev, "configure buffer fail %d\n", result);
-		return result;
-	}
-	result = inv_mpu6050_probe_trigger(indio_dev, irq_type);
-	if (result) {
-		dev_err(dev, "trigger probe fail %d\n", result);
-		return result;
+	if (st->irq > 0) {
+		indio_dev->modes |= INDIO_BUFFER_TRIGGERED;
+
+		result = devm_iio_triggered_buffer_setup(dev, indio_dev,
+							 iio_pollfunc_store_time,
+							 inv_mpu6050_read_fifo,
+							 NULL);
+		if (result) {
+			dev_err(dev, "configure buffer fail %d\n", result);
+			return result;
+		}
+		result = inv_mpu6050_probe_trigger(indio_dev, irq_type);
+		if (result) {
+			dev_err(dev, "trigger probe fail %d\n", result);
+			return result;
+		}
 	}
 
 	result = devm_iio_device_register(dev, indio_dev);

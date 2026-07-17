@@ -16,6 +16,8 @@
 
 	aliases {
 		serial0 = &uart0;
+		i2c0 = &i2c0;
+		i2c2 = &i2c2;
 	};
 
 	chosen {
@@ -158,15 +160,15 @@
 	clock-frequency = <100000>;
     status = "okay";
 
-	/*tas5825m: tas5825m@4d {
+	tas5825m: tas5825m@4d {
 		compatible = "ti,tas5825m";
 		reg = <0x4d>;
-		status = "okay";
+		status = "disabled";
 		#sound-dai-cells = <0>;
 		clocks = <&ccu CLK_I2S>;
-	};*/
+	};
 
-	/*pcm5122: pcm5122@4c {
+	pcm5122: pcm5122@4c {
 		compatible = "ti,pcm5122";
 		reg = <0x4c>;
 		clocks = <&ccu CLK_I2S>;
@@ -175,7 +177,13 @@
 		AVDD-supply = <&reg_vcc3v3>;
 		DVDD-supply = <&reg_vcc3v3>;
 		CPVDD-supply = <&reg_vcc3v3>;
-	};*/
+	};
+
+	mpu6050@68 {
+		compatible = "fire,i2c_mpu6050";
+		reg = <0x68>;
+		status = "okay";
+	};
 
 	/*sabre9018q2c@48 {
 		#sound-dai-cells = <0>;
@@ -189,7 +197,7 @@
 &i2c2 {
     pinctrl-0 = <&i2c2_pins>;
     pinctrl-names = "default";
-	clock-frequency = <5000000>;
+	clock-frequency = <400000>;
     status = "okay";
 };
 
@@ -273,7 +281,12 @@
 
 			partition@350000 {
 				label = "rootfs";
-				reg = <0x350000 0x0000000>;
+				reg = <0x350000 0x700000>;
+			};
+
+			partition@A50000 {
+				label = "overlay";
+				reg = <0xA50000 0x5B0000>;
 			};
 		};
 	};
