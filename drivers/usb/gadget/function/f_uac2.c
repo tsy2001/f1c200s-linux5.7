@@ -80,14 +80,14 @@ static char clksrc_in[8];
 static char clksrc_out[8];
 
 static struct usb_string strings_fn[] = {
-	[STR_ASSOC].s = "Source/Sink",
+	[STR_ASSOC].s = "F1C200S UAC2.0 Speaker",
 	[STR_IF_CTRL].s = "Topology Control",
 	[STR_CLKSRC_IN].s = clksrc_in,
 	[STR_CLKSRC_OUT].s = clksrc_out,
 	[STR_USB_IT].s = "USBH Out",
 	[STR_IO_IT].s = "USBD Out",
 	[STR_USB_OT].s = "USBH In",
-	[STR_IO_OT].s = "USBD In",
+	[STR_IO_OT].s = "Speaker",
 	[STR_AS_OUT_ALT0].s = "Playback Inactive",
 	[STR_AS_OUT_ALT1].s = "Playback Active",
 	[STR_AS_IN_ALT0].s = "Capture Inactive",
@@ -201,7 +201,7 @@ static struct uac2_output_terminal_descriptor io_out_ot_desc = {
 
 	.bDescriptorSubtype = UAC_OUTPUT_TERMINAL,
 	/* .bTerminalID = DYNAMIC */
-	.wTerminalType = cpu_to_le16(UAC_OUTPUT_TERMINAL_UNDEFINED),
+	.wTerminalType = cpu_to_le16(UAC_OUTPUT_TERMINAL_SPEAKER),
 	.bAssocTerminal = 0,
 	/* .bSourceID = DYNAMIC */
 	/* .bCSourceID = DYNAMIC */
@@ -214,7 +214,7 @@ static struct uac2_ac_header_descriptor ac_hdr_desc = {
 
 	.bDescriptorSubtype = UAC_MS_HEADER,
 	.bcdADC = cpu_to_le16(0x200),
-	.bCategory = UAC2_FUNCTION_IO_BOX,
+	.bCategory = UAC2_FUNCTION_DESKTOP_SPEAKER,
 	.wTotalLength = cpu_to_le16(sizeof in_clk_src_desc
 			+ sizeof out_clk_src_desc + sizeof usb_out_it_desc
 			+ sizeof io_in_it_desc + sizeof usb_in_ot_desc
