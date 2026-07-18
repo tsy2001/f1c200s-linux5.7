@@ -274,7 +274,7 @@ static struct usb_endpoint_descriptor fs_epout_desc = {
 
 	.bEndpointAddress = USB_DIR_OUT,
 	.bmAttributes = USB_ENDPOINT_XFER_ISOC | USB_ENDPOINT_SYNC_ADAPTIVE,
-	.wMaxPacketSize = cpu_to_le16(1023),
+	.wMaxPacketSize = cpu_to_le16(512),
 	.bInterval = 1,
 };
 
@@ -284,7 +284,7 @@ static struct usb_endpoint_descriptor hs_epout_desc = {
 
 	.bmAttributes = USB_ENDPOINT_XFER_ISOC | USB_ENDPOINT_SYNC_ADAPTIVE,
 	.wMaxPacketSize = cpu_to_le16(1024),
-	.bInterval = 4,
+	.bInterval = 3,
 };
 
 /* CS AS ISO OUT Endpoint */
@@ -351,7 +351,7 @@ static struct usb_endpoint_descriptor fs_epin_desc = {
 
 	.bEndpointAddress = USB_DIR_IN,
 	.bmAttributes = USB_ENDPOINT_XFER_ISOC | USB_ENDPOINT_SYNC_ASYNC,
-	.wMaxPacketSize = cpu_to_le16(1023),
+	.wMaxPacketSize = cpu_to_le16(512),
 	.bInterval = 1,
 };
 
@@ -361,7 +361,7 @@ static struct usb_endpoint_descriptor hs_epin_desc = {
 
 	.bmAttributes = USB_ENDPOINT_XFER_ISOC | USB_ENDPOINT_SYNC_ASYNC,
 	.wMaxPacketSize = cpu_to_le16(1024),
-	.bInterval = 4,
+	.bInterval = 3,
 };
 
 /* CS AS ISO IN Endpoint */
@@ -452,7 +452,7 @@ static void set_ep_max_packet_size(const struct f_uac2_opts *uac2_opts,
 	unsigned int factor, bool is_playback)
 {
 	int chmask, srate, ssize;
-	u16 max_packet_size;
+	u16 max_packet_size, ep_limit;
 
 	if (is_playback) {
 		chmask = uac2_opts->p_chmask;
@@ -464,10 +464,18 @@ static void set_ep_max_packet_size(const struct f_uac2_opts *uac2_opts,
 		ssize = uac2_opts->c_ssize;
 	}
 
+	/*
+	 * These descriptors are static and get patched on every bind. Restore
+	 * the hardware-safe upper limit before recalculating, otherwise a
+	 * previous 48 kHz bind can permanently clamp a later 96 kHz bind.
+	 */
+	ep_limit = 512;
+	ep_desc->wMaxPacketSize = cpu_to_le16(ep_limit);
+
 	max_packet_size = num_channels(chmask) * ssize *
 		DIV_ROUND_UP(srate, factor / (1 << (ep_desc->bInterval - 1)));
 	ep_desc->wMaxPacketSize = cpu_to_le16(min_t(u16, max_packet_size,
-				le16_to_cpu(ep_desc->wMaxPacketSize)));
+				ep_limit));
 }
 
 /* Use macro to overcome line length limitation */
