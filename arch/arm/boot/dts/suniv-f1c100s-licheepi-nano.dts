@@ -65,18 +65,14 @@
 			default-state = "off";
 			linux,default-trigger = "heartbeat";
 		};
+	};
 
-		usb_switch {
-			label = "usb";
-			gpios = <&pio 3 0 GPIO_ACTIVE_HIGH>; /* PD0 */
-			default-state = "on";
-		};
-
-		mute_crtl {
-			label = "mute";
-			gpios = <&pio 3 13 GPIO_ACTIVE_HIGH>; /* PD13 */
-			default-state = "off";
-		};
+	cmp_module: cmp-module {
+		compatible = "tsy,cmp-module";
+		pinctrl-names = "default";
+		codec-mute-gpios = <&pio 3 13 GPIO_ACTIVE_HIGH>;
+		usb-switch-gpios = <&pio 3 0 GPIO_ACTIVE_HIGH>;
+		status = "okay";
 	};
 
 	pcm5102a: pcm510x {
@@ -197,7 +193,7 @@
 &i2c2 {
     pinctrl-0 = <&i2c2_pins>;
     pinctrl-names = "default";
-	clock-frequency = <400000>;
+	clock-frequency = <4000000>;
     status = "okay";
 };
 

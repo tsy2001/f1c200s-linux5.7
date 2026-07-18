@@ -18,6 +18,18 @@ config FIRE_MPU6050_I2C
 	  To compile this driver as a module, choose M here: the
 	  module will be called mpu6050.ko
 
+config CMP_MODULE
+	tristate "CMP board module GPIO control"
+	depends on OF && GPIOLIB && SYSFS
+	help
+	  Say Y here to enable the CMP board module control driver.
+	  The driver binds to the "tsy,cmp-module" device tree node,
+	  reads codec-mute-gpio and usb-switch-gpio, and exposes a
+	  /dev/cmp-module ioctl interface for userspace GPIO control.
+
+	  To compile this driver as a module, choose M here: the
+	  module will be called cmp-module.
+
 config AD525X_DPOT
 	tristate "Analog Devices Digital Potentiometers"
 	depends on (I2C || SPI) && SYSFS
