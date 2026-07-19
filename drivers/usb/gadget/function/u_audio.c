@@ -356,15 +356,20 @@ int u_audio_start_capture(struct g_audio *audio_dev)
 	struct usb_ep *ep;
 	struct uac_rtd_params *prm;
 	struct uac_params *params = &audio_dev->params;
-	int req_len, i;
+	int req_len, i, ret;
 
 	ep = audio_dev->out_ep;
 	prm = &uac->c_prm;
-	config_ep_by_speed(gadget, &audio_dev->func, ep);
+	ret = config_ep_by_speed(gadget, &audio_dev->func, ep);
+	if (ret)
+		return ret;
 	req_len = ep->maxpacket;
 
+	ret = usb_ep_enable(ep);
+	if (ret)
+		return ret;
+
 	prm->ep_enabled = true;
-	usb_ep_enable(ep);
 
 	for (i = 0; i < params->req_number; i++) {
 		if (!prm->ureq[i].req) {
@@ -409,11 +414,13 @@ int u_audio_start_playback(struct g_audio *audio_dev)
 	struct uac_params *params = &audio_dev->params;
 	unsigned int factor;
 	const struct usb_endpoint_descriptor *ep_desc;
-	int req_len, i;
+	int req_len, i, ret;
 
 	ep = audio_dev->in_ep;
 	prm = &uac->p_prm;
-	config_ep_by_speed(gadget, &audio_dev->func, ep);
+	ret = config_ep_by_speed(gadget, &audio_dev->func, ep);
+	if (ret)
+		return ret;
 
 	ep_desc = ep->desc;
 
@@ -441,8 +448,11 @@ int u_audio_start_playback(struct g_audio *audio_dev)
 	req_len = uac->p_pktsize;
 	uac->p_residue = 0;
 
+	ret = usb_ep_enable(ep);
+	if (ret)
+		return ret;
+
 	prm->ep_enabled = true;
-	usb_ep_enable(ep);
 
 	for (i = 0; i < params->req_number; i++) {
 		if (!prm->ureq[i].req) {
