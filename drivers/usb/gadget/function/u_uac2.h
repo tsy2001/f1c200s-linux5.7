@@ -19,8 +19,10 @@
 #define UAC2_DEF_PSRATE 48000
 #define UAC2_DEF_PSSIZE 2
 #define UAC2_DEF_CCHMASK 0x3
-#define UAC2_DEF_CSRATE 64000
+#define UAC2_DEF_CSRATE 48000
 #define UAC2_DEF_CSSIZE 2
+#define UAC2_DEF_HS_PSRATE 96000
+#define UAC2_DEF_HS_CSRATE 96000
 #define UAC2_DEF_REQ_NUM 2
 
 struct f_uac2_opts {
@@ -31,6 +33,10 @@ struct f_uac2_opts {
 	int				c_chmask;
 	int				c_srate;
 	int				c_ssize;
+	int				fs_p_srate;
+	int				fs_c_srate;
+	int				hs_p_srate;
+	int				hs_c_srate;
 	int				req_number;
 	bool				bound;
 
