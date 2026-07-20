@@ -435,6 +435,12 @@ static const struct sun4i_spdif_quirks sun6i_a31_spdif_quirks = {
 	.has_reset	= true,
 };
 
+static const struct sun4i_spdif_quirks suniv_f1c100s_spdif_quirks = {
+	.reg_dac_txdata	= SUN4I_SPDIF_TXFIFO,
+	.val_fctl_ftx	= SUN4I_SPDIF_FCTL_FTX,
+	.has_reset	= true,
+};
+
 static const struct sun4i_spdif_quirks sun8i_h3_spdif_quirks = {
 	.reg_dac_txdata	= SUN8I_SPDIF_TXFIFO,
 	.val_fctl_ftx   = SUN4I_SPDIF_FCTL_FTX,
@@ -455,6 +461,10 @@ static const struct of_device_id sun4i_spdif_of_match[] = {
 	{
 		.compatible = "allwinner,sun6i-a31-spdif",
 		.data = &sun6i_a31_spdif_quirks,
+	},
+	{
+		.compatible = "allwinner,suniv-f1c100s-spdif",
+		.data = &suniv_f1c100s_spdif_quirks,
 	},
 	{
 		.compatible = "allwinner,sun8i-h3-spdif",

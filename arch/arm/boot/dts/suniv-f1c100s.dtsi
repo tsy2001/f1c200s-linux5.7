@@ -270,6 +270,20 @@
 			status = "disabled";
 		};
 
+		spdif: spdif@1c21400 {
+			#sound-dai-cells = <0>;
+			compatible = "allwinner,suniv-f1c100s-spdif";
+			reg = <0x01c21400 0x400>;
+			interrupts = <5>;
+			clocks = <&ccu CLK_BUS_SPDIF>, <&ccu CLK_SPDIF>;
+			clock-names = "apb", "spdif";
+			resets = <&ccu RST_BUS_SPDIF>;
+			dmas = <&dma SUN4I_DMA_NORMAL 0x01>,
+			       <&dma SUN4I_DMA_NORMAL 0x01>;
+			dma-names = "rx", "tx";
+			status = "disabled";
+		};
+
 		i2s0: i2s@1c22000 {
 			#sound-dai-cells = <0>;
 			compatible = "allwinner,sun6i-a31-i2s";
@@ -308,6 +322,16 @@
 			i2s_pins: i2s-pins {
 				pins = "PD7", "PD8", "PD9", "PD10", "PD11";
 				function = "i2s";
+			};
+
+			spdif_pd17_pin: spdif-pd17-pin {
+				pins = "PD17";
+				function = "spdif";
+			};
+
+			spdif_pe6_pin: spdif-pe6-pin {
+				pins = "PE6";
+				function = "spdif";
 			};
 
 			i2c0_pins: i2c0 {

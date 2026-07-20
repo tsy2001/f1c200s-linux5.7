@@ -82,6 +82,11 @@
 		#sound-dai-cells = <0>;
 	};
 
+	spdif_dit: spdif-dit {
+		compatible = "linux,spdif-dit";
+		#sound-dai-cells = <0>;
+	};
+
 	sound_i2s {
 		compatible = "simple-audio-card";
 		simple-audio-card,name = "I2S-master";
@@ -100,6 +105,20 @@
 			// sound-dai = <&pcm5122>;
 		};
 	};
+
+	sound_spdif {
+		compatible = "simple-audio-card";
+		simple-audio-card,name = "S/PDIF-out";
+		status = "okay";
+
+		simple-audio-card,cpu {
+			sound-dai = <&spdif>;
+		};
+
+		simple-audio-card,codec {
+			sound-dai = <&spdif_dit>;
+		};
+	};
 };
 
 &i2s0 {
@@ -107,6 +126,12 @@
 	sound-dai = <&pcm5102a>;
 	pinctrl-names = "default";
 	pinctrl-0 = <&i2s_pins>;
+	status = "okay";
+};
+
+&spdif {
+	pinctrl-names = "default";
+	pinctrl-0 = <&spdif_pd17_pin>;
 	status = "okay";
 };
 
