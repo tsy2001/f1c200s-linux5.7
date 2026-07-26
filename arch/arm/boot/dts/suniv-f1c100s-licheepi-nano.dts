@@ -24,6 +24,17 @@
 		stdout-path = "serial0:115200n8";
 	};
 
+	reg_vcc_sd: vcc-sd {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc-sd";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		gpio = <&pio 4 2 GPIO_ACTIVE_HIGH>; /* PE2 */
+		enable-active-high;
+		startup-delay-us = <100000>;
+		vin-supply = <&reg_vcc3v3>;
+	};
+
 	/*keys {
 		compatible = "gpio-keys";
 		
@@ -102,6 +113,7 @@
 		simple-audio-card,codec {
 			// sound-dai = <&tas5825m>;
 			sound-dai = <&pcm5102a>;
+			// sound-dai = <&es9018k2m>;
 			// sound-dai = <&pcm5122>;
 		};
 	};
@@ -124,6 +136,7 @@
 &i2s0 {
 	// sound-dai = <&pcm5122>;
 	sound-dai = <&pcm5102a>;
+	// sound-dai = <&es9018k2m>;
 	pinctrl-names = "default";
 	pinctrl-0 = <&i2s_pins>;
 	status = "okay";
@@ -160,10 +173,12 @@
 };
 
 &mmc0 {
-	vmmc-supply = <&reg_vcc3v3>;
+	vmmc-supply = <&reg_vcc_sd>;
 	bus-width = <4>;
 	pinctrl-0 = <&mmc0_pins &mmc0_cd_pin>;
 	cd-gpios = <&pio 4 3 GPIO_ACTIVE_LOW>;
+	cap-power-off-card;
+	full-pwr-cycle;
 	// pinctrl-0 = <&mmc0_pins>;
 	// broken-cd;
 	status = "okay";
@@ -206,20 +221,28 @@
 		status = "okay";
 	};
 
-	/*sabre9018q2c@48 {
+	es9018k2m: es9018k2m@48 {
 		#sound-dai-cells = <0>;
-		compatible = "ess,es9018k2m";
+		compatible = "tsy,es9018k2m";
 		reg = <0x48>;
-		status = "okay";
-	};*/
+		reset-gpios = <&pio 3 12 GPIO_ACTIVE_LOW>; /* PD12 */
+		mclk-frequency = <49152000>;
+		status = "disabled";
+	};
 
 };
 
 &i2c2 {
-    pinctrl-0 = <&i2c2_pins>;
+	pinctrl-0 = <&i2c2_pins>;
     pinctrl-names = "default";
 	clock-frequency = <4000000>;
-    status = "okay";
+	status = "okay";
+
+	ssd1312: oled@3c {
+		compatible = "tsy,ssd1312";
+		reg = <0x3c>;
+		status = "okay";
+	};
 };
 
 &otg_sram {

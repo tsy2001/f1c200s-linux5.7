@@ -6,6 +6,7 @@
 obj-$(CONFIG_IBM_ASM)		+= ibmasm/
 obj-$(CONFIG_FIRE_MPU6050_I2C)	+= mpu6050.o
 obj-$(CONFIG_CMP_MODULE)	+= cmp-module.o
+obj-$(CONFIG_SSD1312)		+= ssd1312/
 obj-$(CONFIG_IBMVMC)		+= ibmvmc.o
 obj-$(CONFIG_AD525X_DPOT)	+= ad525x_dpot.o
 obj-$(CONFIG_AD525X_DPOT_I2C)	+= ad525x_dpot-i2c.o

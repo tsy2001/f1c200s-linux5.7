@@ -1,61 +1,63 @@
-/*
- * es9018k2m.h  --  es9018k2m Soc Audio driver
- *
- * Copyright 2005 Openedhand Ltd.
- *
- * Author: Richard Purdie <richard@openedhand.com>
- *
- * Based on es9018k2m.h
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation.
- */
-
 #ifndef _ES9018K2M_H
 #define _ES9018K2M_H
 
-#include <linux/regmap.h>
-#include <linux/regulator/consumer.h>
-#include <linux/of_device.h>
-#include <sound/soc.h>
-#include <linux/mutex.h>
+#include <linux/ioctl.h>
+#include <linux/types.h>
 
-/* ES9018K2M register space */
+#define ES9018K2M_IOCTL_MAGIC	'E'
 
-#define ES9018K2M_SYSTEM_SETTING    			0x00
-#define ES9018K2M_INPUT_CONFIG   			0x01
-#define ES9018K2M_AUTOMUTE_TIME   			0x04
-#define ES9018K2M_AUTOMUTE_LEVEL   			0x05
-#define ES9018K2M_DEEMPHASIS    			0x06
-#define ES9018K2M_GENERAL_SET   			0x07
-#define ES9018K2M_GPIO_CONFIG      			0x08
-#define ES9018K2M_W_MODE_CONTROL    			0x09
-#define ES9018K2M_V_MODE_CONTROL    			0x0A
-#define ES9018K2M_CHANNEL_MAP    			0x0B
-#define ES9018K2M_DPLL   				0x0C
-#define ES9018K2M_THD_COMPENSATION   			0x0D
-#define ES9018K2M_SOFT_START	   			0x0E
-#define ES9018K2M_VOLUME1	   			0x0F
-#define ES9018K2M_VOLUME2	   			0x10
-#define ES9018K2M_MASTERTRIM0	   			0x11
-#define ES9018K2M_MASTERTRIM1	   			0x12
-#define ES9018K2M_MASTERTRIM2	  			0x13
-#define ES9018K2M_MASTERTRIM3	   			0x14
-#define ES9018K2M_INPUT_SELECT	   			0x15
-#define ES9018K2M_2_HARMONIC_COMPENSATION_0	    	0x16
-#define ES9018K2M_2_HARMONIC_COMPENSATION_1	    	0x17
-#define ES9018K2M_3_HARMONIC_COMPENSATION_0	    	0x18
-#define ES9018K2M_3_HARMONIC_COMPENSATION_1	    	0x19
-//#for V version
-#define ES9018K2M_program_FIR_ADDR	      		0x1A
-#define ES9018K2M_program_FIR_DATA1	   		0x1B
-#define ES9018K2M_program_FIR_DATA2	   		0x1C
-#define ES9018K2M_program_FIR_DATAC	   		0x1D
-#define ES9018K2M_program_FIR_CONTROL	   		0x1E
+#define ES9018K2M_INPUT_I2S	0
+#define ES9018K2M_INPUT_SPDIF	1
+#define ES9018K2M_INPUT_DSD	3
 
-#define ES9018K2M_CACHEREGNUM 	0x1E
+#define ES9018K2M_I2S_MODE_I2S	0
+#define ES9018K2M_I2S_MODE_LJ	1
 
-#define ES9018K2M_SYSCLK_MCLK 1
+struct es9018k2m_volume {
+	__u8 left;
+	__u8 right;
+};
 
-#endif
+struct es9018k2m_format {
+	__u8 bits;
+	__u8 mode;
+	__u8 input;
+	__u8 reserved;
+};
+
+struct es9018k2m_reg {
+	__u8 reg;
+	__u8 val;
+};
+
+struct es9018k2m_status {
+	__u8 chip_status;
+	__u8 gpio_status;
+	__u8 muted;
+	__u8 reserved;
+	__u32 dpll_num;
+	__u32 sample_rate;
+};
+
+#define ES9018K2M_IOCTL_GET_STATUS \
+	_IOR(ES9018K2M_IOCTL_MAGIC, 0x00, struct es9018k2m_status)
+#define ES9018K2M_IOCTL_SET_VOLUME \
+	_IOW(ES9018K2M_IOCTL_MAGIC, 0x01, struct es9018k2m_volume)
+#define ES9018K2M_IOCTL_GET_VOLUME \
+	_IOR(ES9018K2M_IOCTL_MAGIC, 0x02, struct es9018k2m_volume)
+#define ES9018K2M_IOCTL_SET_MUTE \
+	_IOW(ES9018K2M_IOCTL_MAGIC, 0x03, __u8)
+#define ES9018K2M_IOCTL_GET_MUTE \
+	_IOR(ES9018K2M_IOCTL_MAGIC, 0x04, __u8)
+#define ES9018K2M_IOCTL_SET_FORMAT \
+	_IOW(ES9018K2M_IOCTL_MAGIC, 0x05, struct es9018k2m_format)
+#define ES9018K2M_IOCTL_GET_FORMAT \
+	_IOR(ES9018K2M_IOCTL_MAGIC, 0x06, struct es9018k2m_format)
+#define ES9018K2M_IOCTL_READ_REG \
+	_IOWR(ES9018K2M_IOCTL_MAGIC, 0x07, struct es9018k2m_reg)
+#define ES9018K2M_IOCTL_WRITE_REG \
+	_IOW(ES9018K2M_IOCTL_MAGIC, 0x08, struct es9018k2m_reg)
+#define ES9018K2M_IOCTL_RESET \
+	_IO(ES9018K2M_IOCTL_MAGIC, 0x09)
+
+#endif /* _ES9018K2M_H */

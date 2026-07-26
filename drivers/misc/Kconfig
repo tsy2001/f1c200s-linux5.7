@@ -30,6 +30,17 @@ config CMP_MODULE
 	  To compile this driver as a module, choose M here: the
 	  module will be called cmp-module.
 
+config SSD1312
+	tristate "SSD1312 OLED misc character device"
+	depends on I2C
+	depends on OF
+	help
+	  Enable the SSD1312 128x64 I2C OLED driver.
+
+	  The driver initializes the display during probe and exposes the
+	  raw page-major display memory through /dev/ssd1312. Userspace
+	  writes exactly 1024 bytes to update the complete display.
+
 config AD525X_DPOT
 	tristate "Analog Devices Digital Potentiometers"
 	depends on (I2C || SPI) && SYSFS
