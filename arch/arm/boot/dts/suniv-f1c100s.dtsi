@@ -31,9 +31,40 @@
 	};
 
 	cpus {
-		cpu {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		cpu0: cpu@0 {
 			compatible = "arm,arm926ej-s";
 			device_type = "cpu";
+			reg = <0>;
+			clocks = <&ccu CLK_CPU>;
+			operating-points-v2 = <&cpu_opp_table>;
+		};
+	};
+
+	cpu_opp_table: opp-table-cpu {
+		compatible = "operating-points-v2";
+		opp-shared;
+
+		opp-240000000 {
+			opp-hz = /bits/ 64 <240000000>;
+			clock-latency-ns = <244144>;
+		};
+
+		opp-408000000 {
+			opp-hz = /bits/ 64 <408000000>;
+			clock-latency-ns = <244144>;
+		};
+
+		opp-600000000 {
+			opp-hz = /bits/ 64 <600000000>;
+			clock-latency-ns = <244144>;
+		};
+
+		opp-720000000 {
+			opp-hz = /bits/ 64 <720000000>;
+			clock-latency-ns = <244144>;
 		};
 	};
 	
@@ -378,6 +409,8 @@
 			mmc0_pins: mmc0-pins {
 				pins = "PF0", "PF1", "PF2", "PF3", "PF4", "PF5";
 				function = "mmc0";
+				bias-pull-up;
+				drive-strength = <30>;
 			};
 
 			mmc1_pins: mmc1-pins {
@@ -422,7 +455,7 @@
 		};
 
 		mmc0: mmc@1c0f000 {
-			compatible = "allwinner,sun7i-a20-mmc";
+			compatible = "allwinner,sun4i-a10-mmc";
 			reg = <0x01c0f000 0x1000>;
 			clocks = <&ccu CLK_BUS_MMC0>,
 				 <&ccu CLK_MMC0>,
@@ -444,7 +477,7 @@
 		};
 
 		mmc1: mmc@1c10000 {
-			compatible = "allwinner,sun7i-a20-mmc";
+			compatible = "allwinner,sun4i-a10-mmc";
 			reg = <0x01c10000 0x1000>;
 			clocks = <&ccu CLK_BUS_MMC1>,
 				 <&ccu CLK_MMC1>,
@@ -513,7 +546,7 @@
 		};
 
 		pwm: pwm@1c21000 {
-			compatible = "allwinner,sun7i-a20-pwm";
+			compatible = "allwinner,sun4i-a10-pwm";
 			reg = <0x01c21000 0x08>;
 			clocks = <&osc24M>;
 			#pwm-cells = <3>;
