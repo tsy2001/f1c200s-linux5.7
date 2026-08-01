@@ -455,7 +455,7 @@
 		};
 
 		mmc0: mmc@1c0f000 {
-			compatible = "allwinner,sun4i-a10-mmc";
+			compatible = "allwinner,sun7i-a20-mmc";
 			reg = <0x01c0f000 0x1000>;
 			clocks = <&ccu CLK_BUS_MMC0>,
 				 <&ccu CLK_MMC0>,
@@ -477,7 +477,7 @@
 		};
 
 		mmc1: mmc@1c10000 {
-			compatible = "allwinner,sun4i-a10-mmc";
+			compatible = "allwinner,sun7i-a20-mmc";
 			reg = <0x01c10000 0x1000>;
 			clocks = <&ccu CLK_BUS_MMC1>,
 				 <&ccu CLK_MMC1>,
@@ -546,7 +546,7 @@
 		};
 
 		pwm: pwm@1c21000 {
-			compatible = "allwinner,sun4i-a10-pwm";
+			compatible = "allwinner,sun7i-a20-pwm";
 			reg = <0x01c21000 0x08>;
 			clocks = <&osc24M>;
 			#pwm-cells = <3>;
